@@ -11,9 +11,9 @@ class BertTokenizerTest {
     BertTokenizer tokenizer = new BertTokenizer();
 
     @Test
-    void should_count_tokens() {
+    void should_count_tokens_in_text() {
 
-        int tokenCount = tokenizer.countTokens("Hello, how are you doing?");
+        int tokenCount = tokenizer.estimateTokenCountInText("Hello, how are you doing?");
 
         assertThat(tokenCount).isEqualTo(7);
     }
