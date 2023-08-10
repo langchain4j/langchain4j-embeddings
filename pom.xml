@@ -6,7 +6,7 @@
 
     <groupId>dev.langchain4j</groupId>
     <artifactId>langchain4j-embeddings-aggregator</artifactId>
-    <version>0.18.0</version>
+    <version>0.19.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -16,6 +16,5 @@
         <module>langchain4j-embeddings-e5-small-v2</module>
         <module>langchain4j-embeddings-e5-small-v2-q</module>
     </modules>
-
 
 </project>

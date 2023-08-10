@@ -1,10 +1,11 @@
 package dev.langchain4j.model.embedding;
 
 import dev.langchain4j.data.embedding.Embedding;
+import dev.langchain4j.store.embedding.RelevanceScore;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static dev.langchain4j.internaltemp.Utils.repeat;
+import static dev.langchain4j.internal.Utils.repeat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -22,7 +23,7 @@ class ALL_MINILM_L6_V2_EmbeddingModelTest {
         Embedding second = model.embed("hello");
         assertThat(second.vector()).hasSize(384);
 
-        assertThat(Similarity.cosine(first.vector(), second.vector())).isGreaterThan(0.8);
+        assertThat(RelevanceScore.cosine(first.vector(), second.vector())).isGreaterThan(0.9);
     }
 
     @Test

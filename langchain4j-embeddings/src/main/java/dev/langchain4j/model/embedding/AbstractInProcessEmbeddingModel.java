@@ -4,9 +4,9 @@ import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import static dev.langchain4j.internal.Exceptions.illegalArgument;
@@ -16,11 +16,12 @@ public abstract class AbstractInProcessEmbeddingModel implements EmbeddingModel,
 
     private static final int BERT_MAX_TOKENS = 510; // 512 - 2 (special tokens [CLS] and [SEP])
 
-    static OnnxBertEmbeddingModel load(String pathToModel) {
-        return load(Paths.get(pathToModel));
+    static OnnxBertEmbeddingModel loadFromJar(String modelFileName) {
+        InputStream inputStream = AbstractInProcessEmbeddingModel.class.getResourceAsStream("/" + modelFileName);
+        return new OnnxBertEmbeddingModel(inputStream);
     }
 
-    static OnnxBertEmbeddingModel load(Path pathToModel) {
+    static OnnxBertEmbeddingModel loadFromFileSystem(Path pathToModel) {
         try {
             return new OnnxBertEmbeddingModel(Files.newInputStream(pathToModel));
         } catch (IOException e) {
