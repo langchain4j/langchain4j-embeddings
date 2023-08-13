@@ -10,42 +10,42 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.data.Percentage.withPercentage;
 
-class E5_SMALL_V2_EmbeddingModelTest {
+class BGE_SMALL_EN_EmbeddingModelTest {
 
     @Test
     @Disabled("Temporary disabling. This test should run only when this or used (e.g. langchain4j-embeddings) module(s) change")
     void should_embed() {
 
-        EmbeddingModel model = new E5_SMALL_V2_EmbeddingModel();
+        EmbeddingModel model = new BGE_SMALL_EN_EmbeddingModel();
 
-        Embedding first = model.embed("query: hi");
+        Embedding first = model.embed("hi");
         assertThat(first.vector()).hasSize(384);
 
-        Embedding second = model.embed("query: hello");
+        Embedding second = model.embed("hello");
         assertThat(second.vector()).hasSize(384);
 
-        assertThat(RelevanceScore.cosine(first.vector(), second.vector())).isGreaterThan(0.98);
+        assertThat(RelevanceScore.cosine(first.vector(), second.vector())).isGreaterThan(0.97);
     }
 
     @Test
     @Disabled("Temporary disabling. This test should run only when this or used (e.g. langchain4j-embeddings) module(s) change")
-    void embedding_should_have_the_same_values_as_embedding_produced_by_transformers_python_lib() {
+    void embedding_should_have_the_same_values_as_embedding_produced_by_sentence_transformers_python_lib() {
 
-        EmbeddingModel model = new E5_SMALL_V2_EmbeddingModel();
+        EmbeddingModel model = new BGE_SMALL_EN_EmbeddingModel();
 
-        Embedding embedding = model.embed("query: I love transformers.");
+        Embedding embedding = model.embed("I love cool flags!");
 
-        assertThat(embedding.vector()[0]).isCloseTo(-0.0663562790f, withPercentage(1));
-        assertThat(embedding.vector()[1]).isCloseTo(0.0153982891f, withPercentage(1));
-        assertThat(embedding.vector()[382]).isCloseTo(-0.0412562378f, withPercentage(1));
-        assertThat(embedding.vector()[383]).isCloseTo(-0.0130311009f, withPercentage(1));
+        assertThat(embedding.vector()[0]).isCloseTo(-0.0440094993f, withPercentage(1));
+        assertThat(embedding.vector()[1]).isCloseTo(0.0160218030f, withPercentage(1));
+        assertThat(embedding.vector()[382]).isCloseTo(-0.0074426383f, withPercentage(1));
+        assertThat(embedding.vector()[383]).isCloseTo(-0.0055019930f, withPercentage(1));
     }
 
     @Test
     @Disabled("Temporary disabling. This test should run only when this or used (e.g. langchain4j-embeddings) module(s) change")
     void should_embed_510_token_long_text() {
 
-        EmbeddingModel model = new E5_SMALL_V2_EmbeddingModel();
+        EmbeddingModel model = new BGE_SMALL_EN_EmbeddingModel();
 
         String oneToken = "hello ";
 
@@ -58,7 +58,7 @@ class E5_SMALL_V2_EmbeddingModelTest {
     @Disabled("Temporary disabling. This test should run only when this or used (e.g. langchain4j-embeddings) module(s) change")
     void should_fail_to_embed_511_token_long_text() {
 
-        EmbeddingModel model = new E5_SMALL_V2_EmbeddingModel();
+        EmbeddingModel model = new BGE_SMALL_EN_EmbeddingModel();
 
         String oneToken = "hello ";
 

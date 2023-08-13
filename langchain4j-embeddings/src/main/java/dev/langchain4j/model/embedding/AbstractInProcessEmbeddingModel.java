@@ -9,41 +9,37 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import static dev.langchain4j.internal.Exceptions.illegalArgument;
 import static java.util.stream.Collectors.toList;
 
 public abstract class AbstractInProcessEmbeddingModel implements EmbeddingModel, TokenCountEstimator {
 
-    private static final int BERT_MAX_TOKENS = 510; // 512 - 2 (special tokens [CLS] and [SEP])
-
-    static OnnxBertEmbeddingModel loadFromJar(String modelFileName) {
+    static OnnxBertBiEncoder loadFromJar(String modelFileName, String vocabularyFileName, PoolingMode poolingMode) {
         InputStream inputStream = AbstractInProcessEmbeddingModel.class.getResourceAsStream("/" + modelFileName);
-        return new OnnxBertEmbeddingModel(inputStream);
+        return new OnnxBertBiEncoder(
+                inputStream,
+                AbstractInProcessEmbeddingModel.class.getResource("/" + vocabularyFileName),
+                poolingMode
+        );
     }
 
-    static OnnxBertEmbeddingModel loadFromFileSystem(Path pathToModel) {
+    static OnnxBertBiEncoder loadFromFileSystem(Path pathToModel) {
         try {
-            return new OnnxBertEmbeddingModel(Files.newInputStream(pathToModel));
+            return new OnnxBertBiEncoder(
+                    Files.newInputStream(pathToModel),
+                    AbstractInProcessEmbeddingModel.class.getResource("/bert-vocabulary-en.txt"),
+                    PoolingMode.MEAN
+            );
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    protected abstract OnnxBertEmbeddingModel model();
+    protected abstract OnnxBertBiEncoder model();
 
     @Override
     public List<Embedding> embedAll(List<TextSegment> segments) {
         return segments.stream()
-                .map(segment -> {
-                    String text = segment.text();
-                    int tokenCount = estimateTokenCount(text);
-                    if (tokenCount > BERT_MAX_TOKENS) {
-                        throw illegalArgument("Cannot embed text longer than %s tokens. " +
-                                "The following text is %s tokens long: %s", BERT_MAX_TOKENS, tokenCount, text);
-                    }
-                    float[] vector = model().embed(text);
-                    return Embedding.from(vector);
-                })
+                .map(segment -> Embedding.from(model().embed(segment.text())))
                 .collect(toList());
     }
 

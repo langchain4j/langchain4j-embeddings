@@ -4,14 +4,14 @@ import java.nio.file.Path;
 
 public class CustomInProcessEmbeddingModel extends AbstractInProcessEmbeddingModel {
 
-    private final OnnxBertEmbeddingModel model;
+    private final OnnxBertBiEncoder model;
 
     public CustomInProcessEmbeddingModel(Path pathToModel) {
         model = loadFromFileSystem(pathToModel);
     }
 
     @Override
-    protected OnnxBertEmbeddingModel model() {
+    protected OnnxBertBiEncoder model() {
         return model;
     }
 }
