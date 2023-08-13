@@ -9,44 +9,58 @@ import ai.onnxruntime.OrtSession.Result;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static ai.onnxruntime.OnnxTensor.createTensor;
+import static dev.langchain4j.internal.Exceptions.illegalArgument;
+import static dev.langchain4j.internal.ValidationUtils.ensureNotNull;
 import static java.nio.LongBuffer.wrap;
 
-public class OnnxBertEmbeddingModel {
+public class OnnxBertBiEncoder {
+
+    private static final String CLS = "[CLS]";
+    private static final String SEP = "[SEP]";
+    private static final int MAX_SEQUENCE_LENGTH = 510; // 512 - 2 (special tokens [CLS] and [SEP])
 
     private final OrtEnvironment environment;
     private final OrtSession session;
     private final BertTokenizer tokenizer;
+    private final PoolingMode poolingMode;
 
-    public OnnxBertEmbeddingModel(InputStream modelInputStream) {
+    public OnnxBertBiEncoder(InputStream modelInputStream, URL vocabularyFile, PoolingMode poolingMode) {
         try {
             this.environment = OrtEnvironment.getEnvironment();
             this.session = environment.createSession(loadModel(modelInputStream));
-            this.tokenizer = new BertTokenizer();
+            this.tokenizer = new BertTokenizer(vocabularyFile);
+            this.poolingMode = ensureNotNull(poolingMode, "poolingMode");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     public float[] embed(String text) {
-        try (Result result = runModel(text)) {
+        int tokenCount = tokenizer.estimateTokenCountInText(text);
+        if (tokenCount > MAX_SEQUENCE_LENGTH) {
+            throw illegalArgument("Cannot embed text longer than %s tokens. " +
+                    "The following text is %s tokens long: %s", MAX_SEQUENCE_LENGTH, tokenCount, text);
+        }
+        try (Result result = encode(text)) {
             return toEmbedding(result);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private Result runModel(String text) throws OrtException {
+    private Result encode(String text) throws OrtException {
 
         List<String> stringTokens = new ArrayList<>();
-        stringTokens.add("[CLS]");
+        stringTokens.add(CLS);
         stringTokens.addAll(tokenizer.tokenize(text));
-        stringTokens.add("[SEP]");
+        stringTokens.add(SEP);
 
         // TODO reusable buffers
         long[] tokens = stringTokens.stream()
@@ -98,9 +112,24 @@ public class OnnxBertEmbeddingModel {
         }
     }
 
-    private static float[] toEmbedding(Result result) throws OrtException {
+    private float[] toEmbedding(Result result) throws OrtException {
         float[][] vectors = ((float[][][]) result.get(0).getValue())[0];
-        return normalize(meanPool(vectors));
+        return normalize(pool(vectors));
+    }
+
+    private float[] pool(float[][] vectors) {
+        switch (poolingMode) {
+            case CLS:
+                return clsPool(vectors);
+            case MEAN:
+                return meanPool(vectors);
+            default:
+                throw illegalArgument("Unknown pooling mode: " + poolingMode);
+        }
+    }
+
+    private static float[] clsPool(float[][] vectors) {
+        return vectors[0];
     }
 
     private static float[] meanPool(float[][] vectors) {
@@ -110,9 +139,9 @@ public class OnnxBertEmbeddingModel {
 
         float[] averagedVector = new float[vectorLength];
 
-        for (int i = 0; i < numVectors; i++) {
+        for (float[] vector : vectors) {
             for (int j = 0; j < vectorLength; j++) {
-                averagedVector[j] += vectors[i][j];
+                averagedVector[j] += vector[j];
             }
         }
 

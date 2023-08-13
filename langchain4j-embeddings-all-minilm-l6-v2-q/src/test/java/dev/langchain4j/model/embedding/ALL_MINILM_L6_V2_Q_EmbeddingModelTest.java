@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import static dev.langchain4j.internal.Utils.repeat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.data.Percentage.withPercentage;
 
 class ALL_MINILM_L6_V2_Q_EmbeddingModelTest {
 
@@ -24,6 +25,20 @@ class ALL_MINILM_L6_V2_Q_EmbeddingModelTest {
         assertThat(second.vector()).hasSize(384);
 
         assertThat(RelevanceScore.cosine(first.vector(), second.vector())).isGreaterThan(0.9);
+    }
+
+    @Test
+    @Disabled("Temporary disabling. This test should run only when this or used (e.g. langchain4j-embeddings) module(s) change")
+    void embedding_should_have_similar_values_to_embedding_produced_by_sentence_transformers_python_lib() {
+
+        EmbeddingModel model = new ALL_MINILM_L6_V2_Q_EmbeddingModel();
+
+        Embedding embedding = model.embed("I love sentence transformers.");
+
+        assertThat(embedding.vector()[0]).isCloseTo(-0.0803190097f, withPercentage(18));
+        assertThat(embedding.vector()[1]).isCloseTo(-0.0171345081f, withPercentage(18));
+        assertThat(embedding.vector()[382]).isCloseTo(0.0478825271f, withPercentage(18));
+        assertThat(embedding.vector()[383]).isCloseTo(-0.0561899580f, withPercentage(18));
     }
 
     @Test

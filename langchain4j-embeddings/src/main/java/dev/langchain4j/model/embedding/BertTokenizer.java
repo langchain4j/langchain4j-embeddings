@@ -7,6 +7,7 @@ import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.model.Tokenizer;
 
+import java.net.URL;
 import java.util.List;
 
 public class BertTokenizer implements Tokenizer {
@@ -14,11 +15,19 @@ public class BertTokenizer implements Tokenizer {
     private final BertFullTokenizer tokenizer;
 
     public BertTokenizer() {
+        this.tokenizer = createTokenizerFrom(getClass().getResource("/bert-vocabulary-en.txt"));
+    }
+
+    public BertTokenizer(URL vocabularyFile) {
+        this.tokenizer = createTokenizerFrom(vocabularyFile);
+    }
+
+    private static BertFullTokenizer createTokenizerFrom(URL vocabularyFile) {
         try {
             Vocabulary vocabulary = DefaultVocabulary.builder()
-                    .addFromTextFile(getClass().getResource("/bert-vocabulary.txt"))
+                    .addFromTextFile(vocabularyFile)
                     .build();
-            this.tokenizer = new BertFullTokenizer(vocabulary, true);
+            return new BertFullTokenizer(vocabulary, true);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
