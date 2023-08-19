@@ -7,7 +7,7 @@
     <parent>
         <groupId>dev.langchain4j</groupId>
         <artifactId>langchain4j-parent</artifactId>
-        <version>0.20.0</version>
+        <version>0.21.0</version>
     </parent>
 
     <artifactId>langchain4j-embeddings-all-minilm-l6-v2</artifactId>
