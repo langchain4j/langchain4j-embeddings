@@ -78,14 +78,16 @@ public class OnnxBertBiEncoder {
     }
 
     private long[] toTokens(List<String> wordPieces) {
-        List<String> wrapped = new ArrayList<>();
-        wrapped.add(CLS);
-        wrapped.addAll(wordPieces);
-        wrapped.add(SEP);
+        long[] tokens = new long[wordPieces.size() + 2];
 
-        return wrapped.stream()
-                .mapToLong(tokenizer::tokenId)
-                .toArray();
+        int i = 0;
+        tokens[i++] = tokenizer.tokenId(CLS);
+        for (String wordPiece : wordPieces) {
+            tokens[i++] = tokenizer.tokenId(wordPiece);
+        }
+        tokens[i] = tokenizer.tokenId(SEP);
+
+        return tokens;
     }
 
     private Result encode(long[] tokens) throws OrtException {

@@ -52,10 +52,10 @@ class BGE_SMALL_ZH_Q_EmbeddingModelTest {
         Embedding embedding510 = model.embed(repeat(oneToken, 510));
         assertThat(embedding510.vector()).hasSize(512);
 
-        Embedding embedding520 = model.embed(repeat(oneToken, 520));
-        assertThat(embedding520.vector()).hasSize(512);
+        Embedding embedding511 = model.embed(repeat(oneToken, 511));
+        assertThat(embedding511.vector()).hasSize(512);
 
-        assertThat(Similarity.cosine(embedding510.vector(), embedding520.vector())).isGreaterThan(0.99);
+        assertThat(Similarity.cosine(embedding510.vector(), embedding511.vector())).isGreaterThan(0.99);
     }
 
     @Test
