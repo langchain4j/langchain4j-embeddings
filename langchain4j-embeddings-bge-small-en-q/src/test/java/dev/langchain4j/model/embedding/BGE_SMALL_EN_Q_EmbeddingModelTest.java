@@ -17,10 +17,10 @@ class BGE_SMALL_EN_Q_EmbeddingModelTest {
 
         EmbeddingModel model = new BGE_SMALL_EN_Q_EmbeddingModel();
 
-        Embedding first = model.embed("hi");
+        Embedding first = model.embed("hi").get();
         assertThat(first.vector()).hasSize(384);
 
-        Embedding second = model.embed("hello");
+        Embedding second = model.embed("hello").get();
         assertThat(second.vector()).hasSize(384);
 
         assertThat(RelevanceScore.cosine(first.vector(), second.vector())).isGreaterThan(0.97);
@@ -34,7 +34,7 @@ class BGE_SMALL_EN_Q_EmbeddingModelTest {
 
         String oneToken = "hello ";
 
-        Embedding embedding = model.embed(repeat(oneToken, 510));
+        Embedding embedding = model.embed(repeat(oneToken, 510)).get();
 
         assertThat(embedding.vector()).hasSize(384);
     }

@@ -18,10 +18,10 @@ class E5_SMALL_V2_EmbeddingModelTest {
 
         EmbeddingModel model = new E5_SMALL_V2_EmbeddingModel();
 
-        Embedding first = model.embed("query: hi");
+        Embedding first = model.embed("query: hi").get();
         assertThat(first.vector()).hasSize(384);
 
-        Embedding second = model.embed("query: hello");
+        Embedding second = model.embed("query: hello").get();
         assertThat(second.vector()).hasSize(384);
 
         assertThat(RelevanceScore.cosine(first.vector(), second.vector())).isGreaterThan(0.98);
@@ -33,7 +33,7 @@ class E5_SMALL_V2_EmbeddingModelTest {
 
         EmbeddingModel model = new E5_SMALL_V2_EmbeddingModel();
 
-        Embedding embedding = model.embed("query: I love transformers.");
+        Embedding embedding = model.embed("query: I love transformers.").get();
 
         assertThat(embedding.vector()[0]).isCloseTo(-0.0663562790f, withPercentage(1));
         assertThat(embedding.vector()[1]).isCloseTo(0.0153982891f, withPercentage(1));
@@ -49,7 +49,7 @@ class E5_SMALL_V2_EmbeddingModelTest {
 
         String oneToken = "hello ";
 
-        Embedding embedding = model.embed(repeat(oneToken, 510));
+        Embedding embedding = model.embed(repeat(oneToken, 510)).get();
 
         assertThat(embedding.vector()).hasSize(384);
     }

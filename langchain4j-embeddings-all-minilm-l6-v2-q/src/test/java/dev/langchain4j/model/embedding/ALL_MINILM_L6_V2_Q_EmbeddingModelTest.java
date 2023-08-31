@@ -18,10 +18,10 @@ class ALL_MINILM_L6_V2_Q_EmbeddingModelTest {
 
         EmbeddingModel model = new ALL_MINILM_L6_V2_Q_EmbeddingModel();
 
-        Embedding first = model.embed("hi");
+        Embedding first = model.embed("hi").get();
         assertThat(first.vector()).hasSize(384);
 
-        Embedding second = model.embed("hello");
+        Embedding second = model.embed("hello").get();
         assertThat(second.vector()).hasSize(384);
 
         assertThat(RelevanceScore.cosine(first.vector(), second.vector())).isGreaterThan(0.9);
@@ -33,7 +33,7 @@ class ALL_MINILM_L6_V2_Q_EmbeddingModelTest {
 
         EmbeddingModel model = new ALL_MINILM_L6_V2_Q_EmbeddingModel();
 
-        Embedding embedding = model.embed("I love sentence transformers.");
+        Embedding embedding = model.embed("I love sentence transformers.").get();
 
         assertThat(embedding.vector()[0]).isCloseTo(-0.0803190097f, withPercentage(18));
         assertThat(embedding.vector()[1]).isCloseTo(-0.0171345081f, withPercentage(18));
@@ -49,7 +49,7 @@ class ALL_MINILM_L6_V2_Q_EmbeddingModelTest {
 
         String oneToken = "hello ";
 
-        Embedding embedding = model.embed(repeat(oneToken, 510));
+        Embedding embedding = model.embed(repeat(oneToken, 510)).get();
 
         assertThat(embedding.vector()).hasSize(384);
     }
