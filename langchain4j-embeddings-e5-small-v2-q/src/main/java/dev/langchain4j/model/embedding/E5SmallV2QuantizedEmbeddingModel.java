@@ -1,11 +1,11 @@
 package dev.langchain4j.model.embedding;
 
-public class BGE_SMALL_ZH_EmbeddingModel extends AbstractInProcessEmbeddingModel {
+public class E5SmallV2QuantizedEmbeddingModel extends AbstractInProcessEmbeddingModel {
 
     private static final OnnxBertBiEncoder MODEL = loadFromJar(
-            "bge-small-zh.onnx",
-            "bge-small-zh-vocabulary.txt",
-            PoolingMode.CLS
+            "e5-small-v2-q.onnx",
+            "bert-vocabulary-en.txt",
+            PoolingMode.MEAN
     );
 
     @Override

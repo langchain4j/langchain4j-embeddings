@@ -2,7 +2,7 @@ package dev.langchain4j.model.embedding;
 
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
-import dev.langchain4j.model.output.Result;
+import dev.langchain4j.model.output.Response;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,13 +38,13 @@ public abstract class AbstractInProcessEmbeddingModel implements EmbeddingModel,
     protected abstract OnnxBertBiEncoder model();
 
     @Override
-    public Result<List<Embedding>> embedAll(List<TextSegment> segments) {
+    public Response<List<Embedding>> embedAll(List<TextSegment> segments) {
 
         List<Embedding> embeddings = segments.stream()
                 .map(segment -> Embedding.from(model().embed(segment.text())))
                 .collect(toList());
 
-        return Result.from(embeddings);
+        return Response.from(embeddings);
     }
 
     @Override
