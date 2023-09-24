@@ -1,13 +1,13 @@
 package dev.langchain4j.model.embedding;
 
 /**
- * Model: SentenceTransformers all-MiniLM-L6-v2 quantized (smaller and faster, but provides slightly inferior results)
+ * Quantized SentenceTransformers all-MiniLM-L6-v2 embedding model that runs within your Java application's process.
  * <p>
  * Maximum length of text (in tokens) that can be embedded at once: unlimited.
  * However, while you can embed very long texts, the quality of the embedding degrades as the text lengthens.
  * It is recommended to embed segments of no more than 256 tokens.
  * <p>
- * Dimensions: 384
+ * Embedding dimensions: 384
  * <p>
  * More details
  * <a href="https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2">here</a> and
