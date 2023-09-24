@@ -3,7 +3,6 @@ package dev.langchain4j.model.embedding;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.store.embedding.CosineSimilarity;
 import dev.langchain4j.store.embedding.RelevanceScore;
-import dev.langchain4j.store.embedding.Similarity;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -59,32 +58,33 @@ class AllMiniLmL6V2EmbeddingModelTest {
 
     @Test
     @Disabled("Temporary disabling. This test should run only when this or used (e.g. langchain4j-embeddings) module(s) change")
-    void should_embed_text_longer_than_510_tokens_by_splitting_and_averaging_embeddings_of_splits() {
+    void should_fail_to_embed_511_token_long_text() {
 
         EmbeddingModel model = new AllMiniLmL6V2EmbeddingModel();
 
         String oneToken = "hello ";
 
-        Embedding embedding510 = model.embed(repeat(oneToken, 510));
+        Embedding embedding510 = model.embed(repeat(oneToken, 510)).content();
         assertThat(embedding510.vector()).hasSize(384);
 
-        Embedding embedding511 = model.embed(repeat(oneToken, 511));
+        Embedding embedding511 = model.embed(repeat(oneToken, 511)).content();
         assertThat(embedding511.vector()).hasSize(384);
 
-        assertThat(Similarity.cosine(embedding510.vector(), embedding511.vector())).isGreaterThan(0.99);
+        double cosineSimilarity = CosineSimilarity.between(embedding510, embedding511);
+        assertThat(RelevanceScore.fromCosineSimilarity(cosineSimilarity)).isGreaterThan(0.99);
     }
 
     @Test
     @Disabled("Temporary disabling. This test should run only when this or used (e.g. langchain4j-embeddings) module(s) change")
     void should_produce_normalized_vectors() {
 
-        EmbeddingModel model = new ALL_MINILM_L6_V2_EmbeddingModel();
+        EmbeddingModel model = new AllMiniLmL6V2EmbeddingModel();
 
         String oneToken = "hello ";
 
-        assertThat(magnitudeOf(model.embed(oneToken)))
+        assertThat(magnitudeOf(model.embed(oneToken).content()))
                 .isCloseTo(1, withPercentage(0.01));
-        assertThat(magnitudeOf(model.embed(repeat(oneToken, 999))))
+        assertThat(magnitudeOf(model.embed(repeat(oneToken, 999)).content()))
                 .isCloseTo(1, withPercentage(0.01));
     }
 }

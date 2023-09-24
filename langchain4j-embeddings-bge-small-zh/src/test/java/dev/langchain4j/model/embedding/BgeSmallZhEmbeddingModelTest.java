@@ -3,7 +3,6 @@ package dev.langchain4j.model.embedding;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.store.embedding.CosineSimilarity;
 import dev.langchain4j.store.embedding.RelevanceScore;
-import dev.langchain4j.store.embedding.Similarity;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -65,26 +64,27 @@ class BgeSmallZhEmbeddingModelTest {
 
         String oneToken = "书 ";
 
-        Embedding embedding510 = model.embed(repeat(oneToken, 510));
+        Embedding embedding510 = model.embed(repeat(oneToken, 510)).content();
         assertThat(embedding510.vector()).hasSize(512);
 
-        Embedding embedding511 = model.embed(repeat(oneToken, 511));
+        Embedding embedding511 = model.embed(repeat(oneToken, 511)).content();
         assertThat(embedding511.vector()).hasSize(512);
 
-        assertThat(Similarity.cosine(embedding510.vector(), embedding511.vector())).isGreaterThan(0.99);
+        double cosineSimilarity = CosineSimilarity.between(embedding510, embedding511);
+        assertThat(RelevanceScore.fromCosineSimilarity(cosineSimilarity)).isGreaterThan(0.99);
     }
 
     @Test
     @Disabled("Temporary disabling. This test should run only when this or used (e.g. langchain4j-embeddings) module(s) change")
     void should_produce_normalized_vectors() {
 
-        EmbeddingModel model = new BGE_SMALL_ZH_EmbeddingModel();
+        EmbeddingModel model = new BgeSmallZhEmbeddingModel();
 
         String oneToken = "书 ";
 
-        assertThat(magnitudeOf(model.embed(oneToken)))
+        assertThat(magnitudeOf(model.embed(oneToken).content()))
                 .isCloseTo(1, withPercentage(0.01));
-        assertThat(magnitudeOf(model.embed(repeat(oneToken, 999))))
+        assertThat(magnitudeOf(model.embed(repeat(oneToken, 999)).content()))
                 .isCloseTo(1, withPercentage(0.01));
     }
 }
