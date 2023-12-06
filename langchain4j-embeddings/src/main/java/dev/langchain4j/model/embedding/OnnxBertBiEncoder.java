@@ -10,16 +10,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static ai.onnxruntime.OnnxTensor.createTensor;
 import static dev.langchain4j.internal.Exceptions.illegalArgument;
 import static dev.langchain4j.internal.ValidationUtils.ensureNotNull;
 import static java.lang.Math.min;
-import static java.nio.LongBuffer.wrap;
 import static java.util.stream.Collectors.toList;
 
 public class OnnxBertBiEncoder {
@@ -90,31 +91,44 @@ public class OnnxBertBiEncoder {
         return tokens;
     }
 
+    int dummySize = 1000;
+    LongBuffer buffer = ByteBuffer.allocateDirect(dummySize * Long.BYTES)
+            .order(ByteOrder.nativeOrder())
+            .asLongBuffer();
+
     private Result encode(long[] tokens) throws OrtException {
-
-        long[] attentionMasks = new long[tokens.length];
-        for (int i = 0; i < tokens.length; i++) {
-            attentionMasks[i] = 1L;
-        }
-
-        long[] tokenTypeIds = new long[tokens.length];
-        for (int i = 0; i < tokens.length; i++) {
-            tokenTypeIds[i] = 0L;
-        }
 
         long[] shape = {1, tokens.length};
 
-        try (
-                OnnxTensor tokensTensor = createTensor(environment, wrap(tokens), shape);
-                OnnxTensor attentionMasksTensor = createTensor(environment, wrap(attentionMasks), shape);
-                OnnxTensor tokenTypeIdsTensor = createTensor(environment, wrap(tokenTypeIds), shape)
-        ) {
+        buffer.clear();
+        buffer.put(tokens).flip();
+        OnnxTensor tokensTensor = OnnxTensor.createTensor(environment, buffer, shape);
+
+        buffer.clear();
+        for (int i = 0; i < tokens.length; i++) {
+            buffer.put(1L);
+        }
+        buffer.flip();
+        OnnxTensor attentionMasksTensor = OnnxTensor.createTensor(environment, buffer, shape);
+
+        buffer.clear();
+        for (int i = 0; i < tokens.length; i++) {
+            buffer.put(0L);
+        }
+        buffer.flip();
+        OnnxTensor tokenTypeIdsTensor = OnnxTensor.createTensor(environment, buffer, shape);
+
+        try {
             Map<String, OnnxTensor> inputs = new HashMap<>();
             inputs.put("input_ids", tokensTensor);
             inputs.put("token_type_ids", tokenTypeIdsTensor);
             inputs.put("attention_mask", attentionMasksTensor);
 
             return session.run(inputs);
+        } finally {
+            tokensTensor.close();
+            attentionMasksTensor.close();
+            tokenTypeIdsTensor.close();
         }
     }
 
