@@ -1,31 +1,39 @@
 name: Java CI
 
-on: [pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build:
+  java_build:
+    strategy:
+      matrix:
+        java_version: [ 8, 11, 17, 21 ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 8
-        uses: actions/setup-java@v3
+      - uses: actions/checkout@v4
+      - name: Set up JDK ${{ matrix.java_version }}
+        uses: actions/setup-java@v4
         with:
-          java-version: '8'
+          java-version: ${{ matrix.java_version }}
           distribution: 'temurin'
-      - name: Test
-        run: mvn --batch-mode test
+          cache: 'maven'
+      - name: Build with JDK ${{ matrix.java_version }}
+        run: mvn -U -B deploy
 
-
-  # For checking some compliance things (require a recent JDK due to plugins so in a separate step)
   compliance:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-        # Check we only rely on permissive licenses in the main parts of the library:
+          cache: 'maven'
       - name: License Compliance
-        run: mvn -P compliance org.honton.chas:license-maven-plugin:compliance
+        run: mvn -U -P compliance org.honton.chas:license-maven-plugin:compliance
