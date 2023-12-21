@@ -3,6 +3,7 @@ package dev.langchain4j.model.embedding;
 import ai.djl.modality.nlp.DefaultVocabulary;
 import ai.djl.modality.nlp.Vocabulary;
 import ai.djl.modality.nlp.bert.BertFullTokenizer;
+import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.model.Tokenizer;
@@ -54,7 +55,12 @@ public class BertTokenizer implements Tokenizer {
 
     @Override
     public int estimateTokenCountInToolSpecifications(Iterable<ToolSpecification> toolSpecifications) {
-        throw new RuntimeException("Not implemented yet");
+        throw new RuntimeException("Not applicable");
+    }
+
+    @Override
+    public int estimateTokenCountInToolExecutionRequests(Iterable<ToolExecutionRequest> toolExecutionRequests) {
+        throw new RuntimeException("Not applicable");
     }
 
     public List<String> tokenize(String text) {
