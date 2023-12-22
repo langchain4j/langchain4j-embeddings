@@ -3,7 +3,6 @@ package dev.langchain4j.model.embedding;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.store.embedding.CosineSimilarity;
 import dev.langchain4j.store.embedding.RelevanceScore;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static dev.langchain4j.internal.Utils.repeat;
@@ -14,7 +13,6 @@ import static org.assertj.core.data.Percentage.withPercentage;
 class AllMiniLmL6V2EmbeddingModelTest {
 
     @Test
-    @Disabled("Temporary disabling. This test should run only when this or used (e.g. langchain4j-embeddings) module(s) change")
     void should_embed() {
 
         EmbeddingModel model = new AllMiniLmL6V2EmbeddingModel();
@@ -30,7 +28,6 @@ class AllMiniLmL6V2EmbeddingModelTest {
     }
 
     @Test
-    @Disabled("Temporary disabling. This test should run only when this or used (e.g. langchain4j-embeddings) module(s) change")
     void embedding_should_have_the_same_values_as_embedding_produced_by_sentence_transformers_python_lib() {
 
         EmbeddingModel model = new AllMiniLmL6V2EmbeddingModel();
@@ -44,7 +41,6 @@ class AllMiniLmL6V2EmbeddingModelTest {
     }
 
     @Test
-    @Disabled("Temporary disabling. This test should run only when this or used (e.g. langchain4j-embeddings) module(s) change")
     void should_embed_510_token_long_text() {
 
         EmbeddingModel model = new AllMiniLmL6V2EmbeddingModel();
@@ -57,7 +53,6 @@ class AllMiniLmL6V2EmbeddingModelTest {
     }
 
     @Test
-    @Disabled("Temporary disabling. This test should run only when this or used (e.g. langchain4j-embeddings) module(s) change")
     void should_fail_to_embed_511_token_long_text() {
 
         EmbeddingModel model = new AllMiniLmL6V2EmbeddingModel();
@@ -75,7 +70,6 @@ class AllMiniLmL6V2EmbeddingModelTest {
     }
 
     @Test
-    @Disabled("Temporary disabling. This test should run only when this or used (e.g. langchain4j-embeddings) module(s) change")
     void should_produce_normalized_vectors() {
 
         EmbeddingModel model = new AllMiniLmL6V2EmbeddingModel();
