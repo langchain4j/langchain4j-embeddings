@@ -10,12 +10,12 @@ import static dev.langchain4j.model.embedding.internal.VectorUtils.magnitudeOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.Percentage.withPercentage;
 
-class AllMiniLmL6V2QuantizedEmbeddingModelTest {
+class BgeSmallEnEmbeddingModelIT {
 
     @Test
     void should_embed() {
 
-        EmbeddingModel model = new AllMiniLmL6V2QuantizedEmbeddingModel();
+        EmbeddingModel model = new BgeSmallEnEmbeddingModel();
 
         Embedding first = model.embed("hi").content();
         assertThat(first.vector()).hasSize(384);
@@ -24,26 +24,26 @@ class AllMiniLmL6V2QuantizedEmbeddingModelTest {
         assertThat(second.vector()).hasSize(384);
 
         double cosineSimilarity = CosineSimilarity.between(first, second);
-        assertThat(RelevanceScore.fromCosineSimilarity(cosineSimilarity)).isGreaterThan(0.9);
+        assertThat(RelevanceScore.fromCosineSimilarity(cosineSimilarity)).isGreaterThan(0.97);
     }
 
     @Test
-    void embedding_should_have_similar_values_to_embedding_produced_by_sentence_transformers_python_lib() {
+    void embedding_should_have_the_same_values_as_embedding_produced_by_sentence_transformers_python_lib() {
 
-        EmbeddingModel model = new AllMiniLmL6V2QuantizedEmbeddingModel();
+        EmbeddingModel model = new BgeSmallEnEmbeddingModel();
 
-        Embedding embedding = model.embed("I love sentence transformers.").content();
+        Embedding embedding = model.embed("I love cool flags!").content();
 
-        assertThat(embedding.vector()[0]).isCloseTo(-0.0803190097f, withPercentage(18));
-        assertThat(embedding.vector()[1]).isCloseTo(-0.0171345081f, withPercentage(18));
-        assertThat(embedding.vector()[382]).isCloseTo(0.0478825271f, withPercentage(18));
-        assertThat(embedding.vector()[383]).isCloseTo(-0.0561899580f, withPercentage(18));
+        assertThat(embedding.vector()[0]).isCloseTo(-0.0440094993f, withPercentage(1));
+        assertThat(embedding.vector()[1]).isCloseTo(0.0160218030f, withPercentage(1));
+        assertThat(embedding.vector()[382]).isCloseTo(-0.0074426383f, withPercentage(1));
+        assertThat(embedding.vector()[383]).isCloseTo(-0.0055019930f, withPercentage(1));
     }
 
     @Test
     void should_embed_510_token_long_text() {
 
-        EmbeddingModel model = new AllMiniLmL6V2QuantizedEmbeddingModel();
+        EmbeddingModel model = new BgeSmallEnEmbeddingModel();
 
         String oneToken = "hello ";
 
@@ -55,7 +55,7 @@ class AllMiniLmL6V2QuantizedEmbeddingModelTest {
     @Test
     void should_embed_text_longer_than_510_tokens_by_splitting_and_averaging_embeddings_of_splits() {
 
-        EmbeddingModel model = new AllMiniLmL6V2QuantizedEmbeddingModel();
+        EmbeddingModel model = new BgeSmallEnEmbeddingModel();
 
         String oneToken = "hello ";
 
@@ -72,7 +72,7 @@ class AllMiniLmL6V2QuantizedEmbeddingModelTest {
     @Test
     void should_produce_normalized_vectors() {
 
-        EmbeddingModel model = new AllMiniLmL6V2QuantizedEmbeddingModel();
+        EmbeddingModel model = new BgeSmallEnEmbeddingModel();
 
         String oneToken = "hello ";
 
