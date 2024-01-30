@@ -10,40 +10,40 @@ import static dev.langchain4j.model.embedding.internal.VectorUtils.magnitudeOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.Percentage.withPercentage;
 
-class E5SmallV2QuantizedEmbeddingModelTest {
+class AllMiniLmL6V2EmbeddingModelIT {
 
     @Test
     void should_embed() {
 
-        EmbeddingModel model = new E5SmallV2QuantizedEmbeddingModel();
+        EmbeddingModel model = new AllMiniLmL6V2EmbeddingModel();
 
-        Embedding first = model.embed("query: hi").content();
+        Embedding first = model.embed("hi").content();
         assertThat(first.vector()).hasSize(384);
 
-        Embedding second = model.embed("query: hello").content();
+        Embedding second = model.embed("hello").content();
         assertThat(second.vector()).hasSize(384);
 
         double cosineSimilarity = CosineSimilarity.between(first, second);
-        assertThat(RelevanceScore.fromCosineSimilarity(cosineSimilarity)).isGreaterThan(0.98);
+        assertThat(RelevanceScore.fromCosineSimilarity(cosineSimilarity)).isGreaterThan(0.9);
     }
 
     @Test
-    void embedding_should_have_similar_values_to_embedding_produced_by_transformers_python_lib() {
+    void embedding_should_have_the_same_values_as_embedding_produced_by_sentence_transformers_python_lib() {
 
-        EmbeddingModel model = new E5SmallV2QuantizedEmbeddingModel();
+        EmbeddingModel model = new AllMiniLmL6V2EmbeddingModel();
 
-        Embedding embedding = model.embed("query: I love transformers.").content();
+        Embedding embedding = model.embed("I love sentence transformers.").content();
 
-        assertThat(embedding.vector()[0]).isCloseTo(-0.0663562790f, withPercentage(16));
-        assertThat(embedding.vector()[1]).isCloseTo(0.0153982891f, withPercentage(16));
-        assertThat(embedding.vector()[382]).isCloseTo(-0.0412562378f, withPercentage(16));
-        assertThat(embedding.vector()[383]).isCloseTo(-0.0130311009f, withPercentage(16));
+        assertThat(embedding.vector()[0]).isCloseTo(-0.0803190097f, withPercentage(1));
+        assertThat(embedding.vector()[1]).isCloseTo(-0.0171345081f, withPercentage(1));
+        assertThat(embedding.vector()[382]).isCloseTo(0.0478825271f, withPercentage(1));
+        assertThat(embedding.vector()[383]).isCloseTo(-0.0561899580f, withPercentage(1));
     }
 
     @Test
     void should_embed_510_token_long_text() {
 
-        EmbeddingModel model = new E5SmallV2QuantizedEmbeddingModel();
+        EmbeddingModel model = new AllMiniLmL6V2EmbeddingModel();
 
         String oneToken = "hello ";
 
@@ -53,9 +53,9 @@ class E5SmallV2QuantizedEmbeddingModelTest {
     }
 
     @Test
-    void should_embed_text_longer_than_510_tokens_by_splitting_and_averaging_embeddings_of_splits() {
+    void should_fail_to_embed_511_token_long_text() {
 
-        EmbeddingModel model = new E5SmallV2QuantizedEmbeddingModel();
+        EmbeddingModel model = new AllMiniLmL6V2EmbeddingModel();
 
         String oneToken = "hello ";
 
@@ -72,7 +72,7 @@ class E5SmallV2QuantizedEmbeddingModelTest {
     @Test
     void should_produce_normalized_vectors() {
 
-        EmbeddingModel model = new E5SmallV2QuantizedEmbeddingModel();
+        EmbeddingModel model = new AllMiniLmL6V2EmbeddingModel();
 
         String oneToken = "hello ";
 
