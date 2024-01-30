@@ -25,7 +25,7 @@ jobs:
           gpg-passphrase: GPG_PASSPHRASE
 
       - name: release
-        run: mvn -B -U --fail-at-end -Psign -DskipITs clean deploy
+        run: mvn -B -U --fail-at-end -Psign clean deploy
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
