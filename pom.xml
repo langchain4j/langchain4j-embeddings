@@ -125,6 +125,31 @@
                 </executions>
             </plugin>
 
+            <plugin>
+                <groupId>io.sundr</groupId>
+                <artifactId>sundr-maven-plugin</artifactId>
+                <version>0.103.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate-bom</goal>
+                        </goals>
+                        <configuration>
+                            <boms>
+                                <bom>
+                                    <artifactId>langchain4j-embeddings-bom</artifactId>
+                                    <name>LangChain4j Embeddings :: BOM</name>
+                                    <description>Bill of Materials POM for getting full, complete set of compatible versions of LangChain4j Embeddings modules</description>
+                                    <properties>
+                                        <skipStagingRepositoryClose>true</skipStagingRepositoryClose>
+                                        <sonar.skip>true</sonar.skip>
+                                    </properties>
+                                </bom>
+                            </boms>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -140,11 +165,13 @@
     <developers>
         <developer>
             <id>deep-learning-dynamo</id>
+            <name>deep-learning-dynamo</name>
             <email>deeplearningdynamo@gmail.com</email>
             <url>https://github.com/deep-learning-dynamo</url>
         </developer>
         <developer>
             <id>kuraleta</id>
+            <name>kuraleta</name>
             <email>digital.kuraleta@gmail.com</email>
             <url>https://github.com/kuraleta</url>
         </developer>
@@ -169,6 +196,7 @@
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
+            <name>OSS Repository Hosting</name>
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
