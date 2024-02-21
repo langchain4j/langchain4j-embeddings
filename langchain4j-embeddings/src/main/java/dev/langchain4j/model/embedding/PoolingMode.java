@@ -1,6 +1,6 @@
 package dev.langchain4j.model.embedding;
 
-enum PoolingMode {
+public enum PoolingMode {
 
     CLS, MEAN
 }
