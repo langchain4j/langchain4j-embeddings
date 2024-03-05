@@ -17,7 +17,7 @@ public class E5SmallV2QuantizedEmbeddingModel extends AbstractInProcessEmbedding
 
     private static final OnnxBertBiEncoder MODEL = loadFromJar(
             "e5-small-v2-q.onnx",
-            "bert-vocabulary-en.txt",
+            "tokenizer.json",
             PoolingMode.MEAN
     );
 

@@ -2,14 +2,12 @@ package dev.langchain4j.model.embedding;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static dev.langchain4j.internal.Utils.repeat;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class BertTokenizerTest {
+class HuggingFaceTokenizerTest {
 
-    BertTokenizer tokenizer = new BertTokenizer();
+    HuggingFaceTokenizer tokenizer = new HuggingFaceTokenizer();
 
     @Test
     void should_count_tokens_in_text_shorter_than_512_tokens() {
@@ -29,29 +27,5 @@ class BertTokenizerTest {
         int tokenCount = tokenizer.estimateTokenCountInText(text);
 
         assertThat(tokenCount).isEqualTo(700);
-    }
-
-    @Test
-    void should_tokenize() {
-
-        List<String> tokens = tokenizer.tokenize("Hello, how are you doing?");
-
-        assertThat(tokens).containsExactly(
-                "hello",
-                ",",
-                "how",
-                "are",
-                "you",
-                "doing",
-                "?"
-        );
-    }
-
-    @Test
-    void should_return_token_id() {
-
-        assertThat(tokenizer.tokenId("[CLS]")).isEqualTo(101);
-        assertThat(tokenizer.tokenId("[SEP]")).isEqualTo(102);
-        assertThat(tokenizer.tokenId("hello")).isEqualTo(7592);
     }
 }

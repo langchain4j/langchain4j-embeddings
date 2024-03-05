@@ -1,5 +1,7 @@
 package dev.langchain4j.model.embedding;
 
+import ai.djl.huggingface.tokenizers.Encoding;
+import ai.djl.huggingface.tokenizers.HuggingFaceTokenizer;
 import ai.onnxruntime.OnnxTensor;
 import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtException;
@@ -9,35 +11,32 @@ import ai.onnxruntime.OrtSession.Result;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static ai.onnxruntime.OnnxTensor.createTensor;
 import static dev.langchain4j.internal.Exceptions.illegalArgument;
 import static dev.langchain4j.internal.ValidationUtils.ensureNotNull;
 import static java.lang.Math.min;
 import static java.nio.LongBuffer.wrap;
+import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 
 public class OnnxBertBiEncoder {
 
-    private static final String CLS = "[CLS]";
-    private static final String SEP = "[SEP]";
     private static final int MAX_SEQUENCE_LENGTH = 510; // 512 - 2 (special tokens [CLS] and [SEP])
 
     private final OrtEnvironment environment;
     private final OrtSession session;
-    private final BertTokenizer tokenizer;
+    private final Set<String> expectedInputs;
+    private final HuggingFaceTokenizer tokenizer;
     private final PoolingMode poolingMode;
 
-    public OnnxBertBiEncoder(InputStream modelInputStream, URL vocabularyFile, PoolingMode poolingMode) {
+    public OnnxBertBiEncoder(InputStream model, InputStream tokenizer, PoolingMode poolingMode) {
         try {
             this.environment = OrtEnvironment.getEnvironment();
-            this.session = environment.createSession(loadModel(modelInputStream));
-            this.tokenizer = new BertTokenizer(vocabularyFile);
+            this.session = environment.createSession(loadModel(model));
+            this.expectedInputs = session.getInputNames();
+            this.tokenizer = HuggingFaceTokenizer.newInstance(tokenizer, singletonMap("padding", "false"));
             this.poolingMode = ensureNotNull(poolingMode, "poolingMode");
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -46,13 +45,12 @@ public class OnnxBertBiEncoder {
 
     public float[] embed(String text) {
 
-        List<String> wordPieces = tokenizer.tokenize(text);
-        List<List<String>> partitions = partition(wordPieces, MAX_SEQUENCE_LENGTH);
+        List<String> tokens = tokenizer.tokenize(text);
+        List<List<String>> partitions = partition(tokens, MAX_SEQUENCE_LENGTH);
 
         List<float[]> embeddings = new ArrayList<>();
         for (List<String> partition : partitions) {
-            long[] tokens = toTokens(partition);
-            try (Result result = encode(tokens)) {
+            try (Result result = encode(partition)) {
                 float[] embedding = toEmbedding(result);
                 embeddings.add(embedding);
             } catch (OrtException e) {
@@ -67,54 +65,57 @@ public class OnnxBertBiEncoder {
         return normalize(weightedAverage(embeddings, weights));
     }
 
-    private static List<List<String>> partition(List<String> wordPieces, int partitionSize) {
+    private static List<List<String>> partition(List<String> tokens, int partitionSize) {
         List<List<String>> partitions = new ArrayList<>();
-        for (int from = 0; from < wordPieces.size(); from += partitionSize) {
-            int to = min(wordPieces.size(), from + partitionSize);
-            List<String> partition = wordPieces.subList(from, to);
+        // first (CLS) and last (SEP) tokens are ignored
+        for (int from = 1; from < tokens.size() - 1; from += partitionSize) {
+            int to = min(tokens.size() - 1, from + partitionSize);
+            List<String> partition = tokens.subList(from, to);
             partitions.add(partition);
         }
         return partitions;
     }
 
-    private long[] toTokens(List<String> wordPieces) {
-        long[] tokens = new long[wordPieces.size() + 2];
+    private Result encode(List<String> tokens) throws OrtException {
 
-        int i = 0;
-        tokens[i++] = tokenizer.tokenId(CLS);
-        for (String wordPiece : wordPieces) {
-            tokens[i++] = tokenizer.tokenId(wordPiece);
-        }
-        tokens[i] = tokenizer.tokenId(SEP);
+        Encoding encoding = tokenizer.encode(toText(tokens), true, false);
 
-        return tokens;
-    }
+        long[] inputIds = encoding.getIds();
+        long[] attentionMask = encoding.getAttentionMask();
+        long[] tokenTypeIds = encoding.getTypeIds();
 
-    private Result encode(long[] tokens) throws OrtException {
-
-        long[] attentionMasks = new long[tokens.length];
-        for (int i = 0; i < tokens.length; i++) {
-            attentionMasks[i] = 1L;
-        }
-
-        long[] tokenTypeIds = new long[tokens.length];
-        for (int i = 0; i < tokens.length; i++) {
-            tokenTypeIds[i] = 0L;
-        }
-
-        long[] shape = {1, tokens.length};
+        long[] shape = {1, inputIds.length};
 
         try (
-                OnnxTensor tokensTensor = createTensor(environment, wrap(tokens), shape);
-                OnnxTensor attentionMasksTensor = createTensor(environment, wrap(attentionMasks), shape);
+                OnnxTensor inputIdsTensor = createTensor(environment, wrap(inputIds), shape);
+                OnnxTensor attentionMaskTensor = createTensor(environment, wrap(attentionMask), shape);
                 OnnxTensor tokenTypeIdsTensor = createTensor(environment, wrap(tokenTypeIds), shape)
         ) {
             Map<String, OnnxTensor> inputs = new HashMap<>();
-            inputs.put("input_ids", tokensTensor);
-            inputs.put("token_type_ids", tokenTypeIdsTensor);
-            inputs.put("attention_mask", attentionMasksTensor);
+            inputs.put("input_ids", inputIdsTensor);
+            inputs.put("attention_mask", attentionMaskTensor);
+
+            if (expectedInputs.contains("token_type_ids")) {
+                inputs.put("token_type_ids", tokenTypeIdsTensor);
+            }
 
             return session.run(inputs);
+        }
+    }
+
+    private String toText(List<String> tokens) {
+
+        String text = tokenizer.buildSentence(tokens);
+
+        List<String> tokenized = tokenizer.tokenize(text);
+        List<String> tokenizedWithoutSpecialTokens = new LinkedList<>(tokenized);
+        tokenizedWithoutSpecialTokens.remove(0);
+        tokenizedWithoutSpecialTokens.remove(tokenizedWithoutSpecialTokens.size() - 1);
+
+        if (tokenizedWithoutSpecialTokens.equals(tokens)) {
+            return text;
+        } else {
+            return String.join("", tokens);
         }
     }
 

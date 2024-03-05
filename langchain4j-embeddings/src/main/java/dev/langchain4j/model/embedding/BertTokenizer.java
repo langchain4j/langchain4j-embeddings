@@ -11,6 +11,10 @@ import dev.langchain4j.model.Tokenizer;
 import java.net.URL;
 import java.util.List;
 
+/**
+ * @deprecated Use {@link HuggingFaceTokenizer} instead.
+ */
+@Deprecated
 public class BertTokenizer implements Tokenizer {
 
     private final BertFullTokenizer tokenizer;
