@@ -26,13 +26,8 @@ public class HuggingFaceTokenizer implements Tokenizer {
 
     private final ai.djl.huggingface.tokenizers.HuggingFaceTokenizer tokenizer;
 
-    // TODO test other popular embedding models
-    // TODO add bge 1.5? something else?
-    // TODO separate tokenizers for each built-in model
-
     /**
      * Creates an instance of a {@code HuggingFaceTokenizer} using a built-in {@code tokenizer.json} file.
-     *
      */
     public HuggingFaceTokenizer() {
 
