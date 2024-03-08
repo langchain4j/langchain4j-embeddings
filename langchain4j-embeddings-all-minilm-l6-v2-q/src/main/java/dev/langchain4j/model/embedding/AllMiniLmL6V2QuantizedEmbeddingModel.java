@@ -17,7 +17,7 @@ public class AllMiniLmL6V2QuantizedEmbeddingModel extends AbstractInProcessEmbed
 
     private static final OnnxBertBiEncoder MODEL = loadFromJar(
             "all-minilm-l6-v2-q.onnx",
-            "bert-vocabulary-en.txt",
+            "tokenizer.json",
             PoolingMode.MEAN
     );
 

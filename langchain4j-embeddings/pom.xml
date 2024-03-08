@@ -26,15 +26,27 @@
         </dependency>
 
         <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.microsoft.onnxruntime</groupId>
             <artifactId>onnxruntime</artifactId>
-            <version>1.16.3</version>
+            <version>1.17.1</version>
         </dependency>
 
         <dependency>
             <groupId>ai.djl</groupId>
             <artifactId>api</artifactId>
-            <version>0.25.0</version>
+            <version>0.26.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ai.djl.huggingface</groupId>
+            <artifactId>tokenizers</artifactId>
+            <version>0.26.0</version>
         </dependency>
 
         <dependency>
