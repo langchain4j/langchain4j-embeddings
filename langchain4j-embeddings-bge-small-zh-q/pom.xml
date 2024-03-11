@@ -12,8 +12,6 @@
     </parent>
 
     <artifactId>langchain4j-embeddings-bge-small-zh-q</artifactId>
-    <packaging>jar</packaging>
-
     <name>langchain4j-embeddings-bge-small-zh-q</name>
     <description>In-process bge-small-zh (quantized) embedding model</description>
 

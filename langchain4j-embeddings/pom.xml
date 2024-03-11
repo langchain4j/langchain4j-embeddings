@@ -12,8 +12,6 @@
     </parent>
 
     <artifactId>langchain4j-embeddings</artifactId>
-    <packaging>jar</packaging>
-
     <name>langchain4j-embeddings</name>
     <description>Common functionality for other langchain4j-embeddings-xxx modules</description>
 

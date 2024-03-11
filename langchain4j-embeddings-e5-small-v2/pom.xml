@@ -12,8 +12,6 @@
     </parent>
 
     <artifactId>langchain4j-embeddings-e5-small-v2</artifactId>
-    <packaging>jar</packaging>
-
     <name>langchain4j-embeddings-e5-small-v2</name>
     <description>In-process e5-small-v2 embedding model</description>
 

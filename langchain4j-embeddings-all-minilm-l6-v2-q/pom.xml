@@ -12,8 +12,6 @@
     </parent>
 
     <artifactId>langchain4j-embeddings-all-minilm-l6-v2-q</artifactId>
-    <packaging>jar</packaging>
-
     <name>langchain4j-embeddings-all-minilm-l6-v2-q</name>
     <description>In-process all-minilm-l6-v2 (quantized) embedding model</description>
 
