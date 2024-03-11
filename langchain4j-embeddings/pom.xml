@@ -41,6 +41,18 @@
             <groupId>ai.djl</groupId>
             <artifactId>api</artifactId>
             <version>0.26.0</version>
+            <exclusions>
+                <!-- due to CVE-2024-26308 and CVE-2024-25710-->
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-compress</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.26.1</version>
         </dependency>
 
         <dependency>
