@@ -20,20 +20,6 @@ public class OnnxEmbeddingModel extends AbstractInProcessEmbeddingModel {
     private final OnnxBertBiEncoder onnxBertBiEncoder;
 
     /**
-     * @param pathToModel The path to the modelPath file (e.g., "/path/to/model.onnx")
-     * @deprecated Use {@link OnnxEmbeddingModel#OnnxEmbeddingModel(Path, Path, PoolingMode)} or
-     * {@link OnnxEmbeddingModel#OnnxEmbeddingModel(String, String, PoolingMode)} instead.
-     */
-    @Deprecated
-    public OnnxEmbeddingModel(Path pathToModel) {
-        onnxBertBiEncoder = loadFromFileSystem(
-                pathToModel,
-                OnnxEmbeddingModel.class.getResourceAsStream("/tokenizer.json"),
-                PoolingMode.MEAN
-        );
-    }
-
-    /**
      * @param pathToModel     The path to the modelPath file (e.g., "/path/to/model.onnx")
      * @param pathToTokenizer The path to the tokenizer file (e.g., "/path/to/tokenizer.json")
      * @param poolingMode     The pooling model to use. Can be found in the ".../1_Pooling/config.json" file on HuggingFace.
@@ -53,6 +39,30 @@ public class OnnxEmbeddingModel extends AbstractInProcessEmbeddingModel {
      */
     public OnnxEmbeddingModel(String pathToModel, String pathToTokenizer, PoolingMode poolingMode) {
         this(Paths.get(pathToModel), Paths.get(pathToTokenizer), poolingMode);
+    }
+
+    /**
+     * @param pathToModel The path to the modelPath file (e.g., "/path/to/model.onnx")
+     * @deprecated Use {@link OnnxEmbeddingModel#OnnxEmbeddingModel(Path, Path, PoolingMode)} or
+     * {@link OnnxEmbeddingModel#OnnxEmbeddingModel(String, String, PoolingMode)} instead.
+     */
+    @Deprecated
+    public OnnxEmbeddingModel(Path pathToModel) {
+        onnxBertBiEncoder = loadFromFileSystem(
+                pathToModel,
+                OnnxEmbeddingModel.class.getResourceAsStream("/tokenizer.json"),
+                PoolingMode.MEAN
+        );
+    }
+
+    /**
+     * @param pathToModel The path to the modelPath file (e.g., "/path/to/model.onnx")
+     * @deprecated Use {@link OnnxEmbeddingModel#OnnxEmbeddingModel(Path, Path, PoolingMode)} or
+     * {@link OnnxEmbeddingModel#OnnxEmbeddingModel(String, String, PoolingMode)} instead.
+     */
+    @Deprecated
+    public OnnxEmbeddingModel(String pathToModel) {
+        this(Paths.get(pathToModel));
     }
 
     @Override
