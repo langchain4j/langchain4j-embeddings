@@ -2,15 +2,17 @@ package dev.langchain4j.model.embedding;
 
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
+import dev.langchain4j.model.embedding.OnnxBertBiEncoder.EmbeddingAndTokenCount;
 import dev.langchain4j.model.output.Response;
+import dev.langchain4j.model.output.TokenUsage;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.nio.file.Files.newInputStream;
-import static java.util.stream.Collectors.toList;
 
 public abstract class AbstractInProcessEmbeddingModel implements EmbeddingModel, TokenCountEstimator {
 
@@ -41,11 +43,16 @@ public abstract class AbstractInProcessEmbeddingModel implements EmbeddingModel,
     @Override
     public Response<List<Embedding>> embedAll(List<TextSegment> segments) {
 
-        List<Embedding> embeddings = segments.stream()
-                .map(segment -> Embedding.from(model().embed(segment.text())))
-                .collect(toList());
+        int inputTokenCount = 0;
 
-        return Response.from(embeddings);
+        List<Embedding> embeddings = new ArrayList<>();
+        for (TextSegment segment : segments) {
+            EmbeddingAndTokenCount embeddingAndTokenCount = model().embed(segment.text());
+            embeddings.add(Embedding.from(embeddingAndTokenCount.embedding));
+            inputTokenCount += embeddingAndTokenCount.tokenCount - 2; // do not count special tokens [CLS] and [SEP]
+        }
+
+        return Response.from(embeddings, new TokenUsage(inputTokenCount));
     }
 
     @Override
