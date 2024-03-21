@@ -14,7 +14,7 @@ import static java.util.stream.Collectors.toList;
 
 public abstract class AbstractInProcessEmbeddingModel implements EmbeddingModel, TokenCountEstimator {
 
-    static OnnxBertBiEncoder loadFromJar(String modelFileName, String tokenizerFileName, PoolingMode poolingMode) {
+    protected static OnnxBertBiEncoder loadFromJar(String modelFileName, String tokenizerFileName, PoolingMode poolingMode) {
         InputStream model = AbstractInProcessEmbeddingModel.class.getResourceAsStream("/" + modelFileName);
         InputStream tokenizer = AbstractInProcessEmbeddingModel.class.getResourceAsStream("/" + tokenizerFileName);
         return new OnnxBertBiEncoder(model, tokenizer, poolingMode);
