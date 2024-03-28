@@ -43,7 +43,18 @@ public class OnnxBertBiEncoder {
         }
     }
 
-    public float[] embed(String text) {
+    static class EmbeddingAndTokenCount {
+
+        float[] embedding;
+        int tokenCount;
+
+        EmbeddingAndTokenCount(float[] embedding, int tokenCount) {
+            this.embedding = embedding;
+            this.tokenCount = tokenCount;
+        }
+    }
+
+    public EmbeddingAndTokenCount embed(String text) {
 
         List<String> tokens = tokenizer.tokenize(text);
         List<List<String>> partitions = partition(tokens, MAX_SEQUENCE_LENGTH);
@@ -62,7 +73,9 @@ public class OnnxBertBiEncoder {
                 .map(List::size)
                 .collect(toList());
 
-        return normalize(weightedAverage(embeddings, weights));
+        float[] embedding = normalize(weightedAverage(embeddings, weights));
+
+        return new EmbeddingAndTokenCount(embedding, tokens.size());
     }
 
     private static List<List<String>> partition(List<String> tokens, int partitionSize) {

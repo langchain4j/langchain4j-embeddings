@@ -1,6 +1,7 @@
 package dev.langchain4j.model.embedding;
 
 import dev.langchain4j.data.embedding.Embedding;
+import dev.langchain4j.model.output.Response;
 import dev.langchain4j.store.embedding.CosineSimilarity;
 import dev.langchain4j.store.embedding.RelevanceScore;
 import org.junit.jupiter.api.Test;
@@ -80,5 +81,19 @@ class AllMiniLmL6V2EmbeddingModelIT {
                 .isCloseTo(1, withPercentage(0.01));
         assertThat(magnitudeOf(model.embed(repeat(oneToken, 999)).content()))
                 .isCloseTo(1, withPercentage(0.01));
+    }
+
+    @Test
+    void should_return_token_usage() {
+
+        EmbeddingModel model = new AllMiniLmL6V2EmbeddingModel();
+
+        Response<Embedding> response = model.embed("hi");
+
+        assertThat(response.tokenUsage().inputTokenCount()).isEqualTo(1);
+        assertThat(response.tokenUsage().outputTokenCount()).isNull();
+        assertThat(response.tokenUsage().totalTokenCount()).isEqualTo(1);
+
+        assertThat(model.embed("hi, how are you doing?").tokenUsage().inputTokenCount()).isEqualTo(7);
     }
 }
