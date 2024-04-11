@@ -1,7 +1,8 @@
 # langchain4j-embeddings
 
 Repository for LangChain4j's in-process embedding models.
-In case of issues and feature requests, please submit them [here](https://github.com/langchain4j/langchain4j/issues/new/choose).
+
+If you have any issues or feature requests, please submit them [here](https://github.com/langchain4j/langchain4j/issues/new/choose).
 
 ## Git LFS
 This repository is separate from the [main repository](https://github.com/langchain4j/langchain4j) due to the large file sizes of the `.onnx` models.
