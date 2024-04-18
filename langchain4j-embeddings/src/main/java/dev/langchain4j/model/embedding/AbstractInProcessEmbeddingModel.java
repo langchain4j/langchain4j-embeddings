@@ -17,8 +17,8 @@ import static java.nio.file.Files.newInputStream;
 public abstract class AbstractInProcessEmbeddingModel implements EmbeddingModel, TokenCountEstimator {
 
     protected static OnnxBertBiEncoder loadFromJar(String modelFileName, String tokenizerFileName, PoolingMode poolingMode) {
-        InputStream model = AbstractInProcessEmbeddingModel.class.getResourceAsStream("/" + modelFileName);
-        InputStream tokenizer = AbstractInProcessEmbeddingModel.class.getResourceAsStream("/" + tokenizerFileName);
+        InputStream model = Thread.currentThread().getContextClassLoader().getResourceAsStream(modelFileName);
+        InputStream tokenizer = Thread.currentThread().getContextClassLoader().getResourceAsStream(tokenizerFileName);
         return new OnnxBertBiEncoder(model, tokenizer, poolingMode);
     }
 
