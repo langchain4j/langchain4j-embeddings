@@ -5,8 +5,15 @@ import dev.langchain4j.store.embedding.CosineSimilarity;
 import dev.langchain4j.store.embedding.RelevanceScore;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import static dev.langchain4j.internal.Utils.repeat;
 import static dev.langchain4j.model.embedding.internal.VectorUtils.magnitudeOf;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.Percentage.withPercentage;
 
@@ -80,5 +87,32 @@ class AllMiniLmL6V2QuantizedEmbeddingModelIT {
                 .isCloseTo(1, withPercentage(0.01));
         assertThat(magnitudeOf(model.embed(repeat(oneToken, 999)).content()))
                 .isCloseTo(1, withPercentage(0.01));
+    }
+
+    @Test
+    void should_embed_concurrently() throws Exception {
+
+        // given
+        EmbeddingModel model = new AllMiniLmL6V2QuantizedEmbeddingModel();
+        String text = "This is a test sentence to embed";
+        Embedding referenceEmbedding = model.embed(text).content();
+
+        // when
+        int numThreads = 10_000;
+        ExecutorService executor = Executors.newFixedThreadPool(numThreads);
+        List<Future<Embedding>> futures = new ArrayList<>();
+
+        for (int i = 0; i < numThreads; i++) {
+            futures.add(executor.submit(() -> model.embed(text).content()));
+        }
+
+        executor.shutdown();
+        executor.awaitTermination(15, SECONDS);
+
+        // then
+        for (Future<Embedding> future : futures) {
+            Embedding embedding = future.get();
+            assertThat(embedding).isEqualTo(referenceEmbedding);
+        }
     }
 }
