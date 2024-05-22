@@ -35,10 +35,10 @@ class BgeSmallZhV15EmbeddingModelTest {
 
         Embedding embedding = model.embed("书").content();
 
-        assertThat(embedding.vector()[0]).isCloseTo(-0.0003102528f, withPercentage(1));
-        assertThat(embedding.vector()[1]).isCloseTo(0.06835828f, withPercentage(1));
-        assertThat(embedding.vector()[510]).isCloseTo(0.07749761f, withPercentage(1));
-        assertThat(embedding.vector()[511]).isCloseTo(-0.047857285f, withPercentage(1));
+        assertThat(embedding.vector()[0]).isCloseTo(-0.0003101615f, withPercentage(1));
+        assertThat(embedding.vector()[1]).isCloseTo(0.0683581978f, withPercentage(1));
+        assertThat(embedding.vector()[510]).isCloseTo(0.0774975568f, withPercentage(1));
+        assertThat(embedding.vector()[511]).isCloseTo(-0.0478572957f, withPercentage(1));
     }
 
     @Test
