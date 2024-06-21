@@ -115,4 +115,12 @@ class AllMiniLmL6V2QuantizedEmbeddingModelIT {
             assertThat(embedding).isEqualTo(referenceEmbedding);
         }
     }
+
+    @Test
+    void should_return_correct_dimension() {
+
+        EmbeddingModel model = new AllMiniLmL6V2QuantizedEmbeddingModel();
+
+        assertThat(model.dimension()).isEqualTo(384);
+    }
 }

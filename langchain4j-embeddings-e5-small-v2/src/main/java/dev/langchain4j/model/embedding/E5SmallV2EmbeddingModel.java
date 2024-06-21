@@ -25,4 +25,9 @@ public class E5SmallV2EmbeddingModel extends AbstractInProcessEmbeddingModel {
     protected OnnxBertBiEncoder model() {
         return MODEL;
     }
+
+    @Override
+    protected Integer knownDimension() {
+        return 384;
+    }
 }

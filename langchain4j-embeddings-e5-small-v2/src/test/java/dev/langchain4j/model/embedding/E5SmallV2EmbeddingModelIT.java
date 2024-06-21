@@ -81,4 +81,12 @@ class E5SmallV2EmbeddingModelIT {
         assertThat(magnitudeOf(model.embed(repeat(oneToken, 999)).content()))
                 .isCloseTo(1, withPercentage(0.01));
     }
+
+    @Test
+    void should_return_correct_dimension() {
+
+        EmbeddingModel model = new E5SmallV2EmbeddingModel();
+
+        assertThat(model.dimension()).isEqualTo(384);
+    }
 }

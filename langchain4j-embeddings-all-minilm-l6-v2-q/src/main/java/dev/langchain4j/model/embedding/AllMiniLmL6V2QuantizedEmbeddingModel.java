@@ -25,4 +25,9 @@ public class AllMiniLmL6V2QuantizedEmbeddingModel extends AbstractInProcessEmbed
     protected OnnxBertBiEncoder model() {
         return MODEL;
     }
+
+    @Override
+    protected Integer knownDimension() {
+        return 384;
+    }
 }

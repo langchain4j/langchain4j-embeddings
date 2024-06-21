@@ -68,4 +68,12 @@ class BgeSmallZhQuantizedEmbeddingModelIT {
         assertThat(magnitudeOf(model.embed(repeat(oneToken, 999)).content()))
                 .isCloseTo(1, withPercentage(0.01));
     }
+
+    @Test
+    void should_return_correct_dimension() {
+
+        EmbeddingModel model = new BgeSmallZhQuantizedEmbeddingModel();
+
+        assertThat(model.dimension()).isEqualTo(512);
+    }
 }
