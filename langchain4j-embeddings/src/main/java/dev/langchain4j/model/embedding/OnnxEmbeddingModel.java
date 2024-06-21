@@ -2,6 +2,10 @@ package dev.langchain4j.model.embedding;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+import static dev.langchain4j.internal.ValidationUtils.ensureNotNull;
 
 /**
  * An embedding model that runs within your Java application's process
@@ -18,6 +22,7 @@ import java.nio.file.Paths;
 public class OnnxEmbeddingModel extends AbstractInProcessEmbeddingModel {
 
     private final OnnxBertBiEncoder onnxBertBiEncoder;
+    private final Executor executor;
 
     /**
      * @param pathToModel     The path to the modelPath file (e.g., "/path/to/model.onnx")
@@ -27,7 +32,20 @@ public class OnnxEmbeddingModel extends AbstractInProcessEmbeddingModel {
      *                        {@code "pooling_mode_mean_tokens": true} means that {@link PoolingMode#MEAN} should be used.
      */
     public OnnxEmbeddingModel(Path pathToModel, Path pathToTokenizer, PoolingMode poolingMode) {
-        onnxBertBiEncoder = loadFromFileSystem(pathToModel, pathToTokenizer, poolingMode);
+        this(pathToModel, pathToTokenizer, poolingMode, Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()));
+    }
+
+    /**
+     * @param pathToModel     The path to the modelPath file (e.g., "/path/to/model.onnx")
+     * @param pathToTokenizer The path to the tokenizer file (e.g., "/path/to/tokenizer.json")
+     * @param poolingMode     The pooling model to use. Can be found in the ".../1_Pooling/config.json" file on HuggingFace.
+     *                        Here is an <a href="https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/blob/main/1_Pooling/config.json">example</a>.
+     *                        {@code "pooling_mode_mean_tokens": true} means that {@link PoolingMode#MEAN} should be used.
+     * @param executor        The executor to use to parallelize the embedding process.
+     */
+    public OnnxEmbeddingModel(Path pathToModel, Path pathToTokenizer, PoolingMode poolingMode, Executor executor) {
+        this.onnxBertBiEncoder = loadFromFileSystem(pathToModel, pathToTokenizer, poolingMode);
+        this.executor = ensureNotNull(executor, "executor");
     }
 
     /**
@@ -42,17 +60,30 @@ public class OnnxEmbeddingModel extends AbstractInProcessEmbeddingModel {
     }
 
     /**
+     * @param pathToModel     The path to the model file (e.g., "/home/me/model.onnx")
+     * @param pathToTokenizer The path to the tokenizer file (e.g., "/path/to/tokenizer.json")
+     * @param poolingMode     The pooling model to use. Can be found in the ".../1_Pooling/config.json" file on HuggingFace.
+     *                        Here is an <a href="https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/blob/main/1_Pooling/config.json">example</a>.
+     *                        {@code "pooling_mode_mean_tokens": true} means that {@link PoolingMode#MEAN} should be used.
+     * @param executor        The executor to use to parallelize the embedding process.
+     */
+    public OnnxEmbeddingModel(String pathToModel, String pathToTokenizer, PoolingMode poolingMode, Executor executor) {
+        this(Paths.get(pathToModel), Paths.get(pathToTokenizer), poolingMode, executor);
+    }
+
+    /**
      * @param pathToModel The path to the modelPath file (e.g., "/path/to/model.onnx")
      * @deprecated Use {@link OnnxEmbeddingModel#OnnxEmbeddingModel(Path, Path, PoolingMode)} or
      * {@link OnnxEmbeddingModel#OnnxEmbeddingModel(String, String, PoolingMode)} instead.
      */
     @Deprecated
     public OnnxEmbeddingModel(Path pathToModel) {
-        onnxBertBiEncoder = loadFromFileSystem(
+        this.onnxBertBiEncoder = loadFromFileSystem(
                 pathToModel,
                 OnnxEmbeddingModel.class.getResourceAsStream("/tokenizer.json"),
                 PoolingMode.MEAN
         );
+        this.executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     }
 
     /**
@@ -68,5 +99,10 @@ public class OnnxEmbeddingModel extends AbstractInProcessEmbeddingModel {
     @Override
     protected OnnxBertBiEncoder model() {
         return onnxBertBiEncoder;
+    }
+
+    @Override
+    protected Executor executor() {
+        return executor;
     }
 }

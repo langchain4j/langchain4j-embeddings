@@ -1,5 +1,10 @@
 package dev.langchain4j.model.embedding;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+import static dev.langchain4j.internal.ValidationUtils.ensureNotNull;
+
 /**
  * Quantized BAAI bge-small-zh embedding model that runs within your Java application's process.
  * <p>
@@ -21,9 +26,33 @@ public class BgeSmallZhQuantizedEmbeddingModel extends AbstractInProcessEmbeddin
             PoolingMode.CLS
     );
 
+    private final Executor executor;
+
+    /**
+     * Creates an instance of an {@code BgeSmallZhQuantizedEmbeddingModel}.
+     * Uses a fixed thread pool with the number of threads equal to the number of available processors.
+     */
+    public BgeSmallZhQuantizedEmbeddingModel() {
+        this(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()));
+    }
+
+    /**
+     * Creates an instance of an {@code BgeSmallZhQuantizedEmbeddingModel}.
+     *
+     * @param executor The executor to use to parallelize the embedding process.
+     */
+    public BgeSmallZhQuantizedEmbeddingModel(Executor executor) {
+        this.executor = ensureNotNull(executor, "executor");
+    }
+
     @Override
     protected OnnxBertBiEncoder model() {
         return MODEL;
+    }
+
+    @Override
+    protected Executor executor() {
+        return executor;
     }
 
     @Override

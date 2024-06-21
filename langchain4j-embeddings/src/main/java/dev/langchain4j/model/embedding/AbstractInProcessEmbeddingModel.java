@@ -11,8 +11,13 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 
 import static java.nio.file.Files.newInputStream;
+import static java.util.concurrent.CompletableFuture.supplyAsync;
+import static java.util.stream.Collectors.toList;
 
 public abstract class AbstractInProcessEmbeddingModel extends DimensionAwareEmbeddingModel implements TokenCountEstimator {
 
@@ -40,16 +45,28 @@ public abstract class AbstractInProcessEmbeddingModel extends DimensionAwareEmbe
 
     protected abstract OnnxBertBiEncoder model();
 
+    protected abstract Executor executor();
+
     @Override
     public Response<List<Embedding>> embedAll(List<TextSegment> segments) {
 
-        int inputTokenCount = 0;
+        Executor executor = executor();
 
+        List<CompletableFuture<EmbeddingAndTokenCount>> futures = segments.stream()
+                .map(segment -> supplyAsync(() -> model().embed(segment.text()), executor))
+                .collect(toList());
+
+        int inputTokenCount = 0;
         List<Embedding> embeddings = new ArrayList<>();
-        for (TextSegment segment : segments) {
-            EmbeddingAndTokenCount embeddingAndTokenCount = model().embed(segment.text());
-            embeddings.add(Embedding.from(embeddingAndTokenCount.embedding));
-            inputTokenCount += embeddingAndTokenCount.tokenCount - 2; // do not count special tokens [CLS] and [SEP]
+
+        for (CompletableFuture<EmbeddingAndTokenCount> future : futures) {
+            try {
+                EmbeddingAndTokenCount embeddingAndTokenCount = future.get();
+                embeddings.add(Embedding.from(embeddingAndTokenCount.embedding));
+                inputTokenCount += embeddingAndTokenCount.tokenCount - 2; // do not count special tokens [CLS] and [SEP]
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         return Response.from(embeddings, new TokenUsage(inputTokenCount));
