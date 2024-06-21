@@ -96,4 +96,12 @@ class AllMiniLmL6V2EmbeddingModelIT {
 
         assertThat(model.embed("hi, how are you doing?").tokenUsage().inputTokenCount()).isEqualTo(7);
     }
+
+    @Test
+    void should_return_correct_dimension() {
+
+        EmbeddingModel model = new AllMiniLmL6V2EmbeddingModel();
+
+        assertThat(model.dimension()).isEqualTo(384);
+    }
 }

@@ -25,4 +25,9 @@ public class BgeSmallZhQuantizedEmbeddingModel extends AbstractInProcessEmbeddin
     protected OnnxBertBiEncoder model() {
         return MODEL;
     }
+
+    @Override
+    protected Integer knownDimension() {
+        return 512;
+    }
 }
