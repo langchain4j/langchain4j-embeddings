@@ -1,7 +1,6 @@
 package dev.langchain4j.model.embedding;
 
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import static dev.langchain4j.internal.ValidationUtils.ensureNotNull;
 
@@ -13,6 +12,14 @@ import static dev.langchain4j.internal.ValidationUtils.ensureNotNull;
  * It is recommended to embed segments of no more than 256 tokens.
  * <p>
  * Embedding dimensions: 384
+ * <p>
+ * Uses an {@link Executor} to parallelize the embedding process.
+ * By default, uses a cached thread pool with the number of threads equal to the number of available processors.
+ * Threads are cached for 1 second.
+ * <p>
+ * Uses an {@link Executor} to parallelize the embedding process.
+ * By default, uses a cached thread pool with the number of threads equal to the number of available processors.
+ * Threads are cached for 1 second.
  * <p>
  * More details
  * <a href="https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2">here</a> and
@@ -26,14 +33,13 @@ public class AllMiniLmL6V2QuantizedEmbeddingModel extends AbstractInProcessEmbed
             PoolingMode.MEAN
     );
 
-    private final Executor executor;
-
     /**
      * Creates an instance of an {@code AllMiniLmL6V2QuantizedEmbeddingModel}.
-     * Uses a fixed thread pool with the number of threads equal to the number of available processors.
+     * Uses a cached thread pool with the number of threads equal to the number of available processors.
+     * Threads are cached for 1 second.
      */
     public AllMiniLmL6V2QuantizedEmbeddingModel() {
-        this(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()));
+        super(null);
     }
 
     /**
@@ -42,17 +48,12 @@ public class AllMiniLmL6V2QuantizedEmbeddingModel extends AbstractInProcessEmbed
      * @param executor The executor to use to parallelize the embedding process.
      */
     public AllMiniLmL6V2QuantizedEmbeddingModel(Executor executor) {
-        this.executor = ensureNotNull(executor, "executor");
+        super(ensureNotNull(executor, "executor"));
     }
 
     @Override
     protected OnnxBertBiEncoder model() {
         return MODEL;
-    }
-
-    @Override
-    protected Executor executor() {
-        return executor;
     }
 
     @Override
