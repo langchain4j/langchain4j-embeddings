@@ -17,10 +17,6 @@ import static dev.langchain4j.internal.ValidationUtils.ensureNotNull;
  * By default, uses a cached thread pool with the number of threads equal to the number of available processors.
  * Threads are cached for 1 second.
  * <p>
- * Uses an {@link Executor} to parallelize the embedding process.
- * By default, uses a cached thread pool with the number of threads equal to the number of available processors.
- * Threads are cached for 1 second.
- * <p>
  * More details
  * <a href="https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2">here</a> and
  * <a href="https://www.sbert.net/docs/pretrained_models.html">here</a>
