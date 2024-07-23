@@ -1,7 +1,10 @@
 package dev.langchain4j.model.embedding.onnx.allminilml6v2q;
 
 import dev.langchain4j.data.embedding.Embedding;
+import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
+import dev.langchain4j.model.output.Response;
+import dev.langchain4j.model.output.TokenUsage;
 import dev.langchain4j.store.embedding.CosineSimilarity;
 import dev.langchain4j.store.embedding.RelevanceScore;
 import org.junit.jupiter.api.Test;
@@ -14,6 +17,7 @@ import java.util.concurrent.Future;
 
 import static dev.langchain4j.internal.Utils.repeat;
 import static dev.langchain4j.model.embedding.onnx.internal.VectorUtils.magnitudeOf;
+import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.Percentage.withPercentage;
@@ -33,6 +37,29 @@ class AllMiniLmL6V2QuantizedEmbeddingModelIT {
 
         double cosineSimilarity = CosineSimilarity.between(first, second);
         assertThat(RelevanceScore.fromCosineSimilarity(cosineSimilarity)).isGreaterThan(0.9);
+    }
+
+    @Test
+    void should_embed_multiple_segments() {
+
+        EmbeddingModel model = new AllMiniLmL6V2QuantizedEmbeddingModel();
+        TextSegment first = TextSegment.from("hi");
+        TextSegment second = TextSegment.from("hello");
+
+        Response<List<Embedding>> response = model.embedAll(asList(first, second));
+
+        List<Embedding> embeddings = response.content();
+        assertThat(embeddings).hasSize(2);
+
+        assertThat(embeddings.get(0)).isEqualTo(model.embed(first).content());
+        assertThat(embeddings.get(1)).isEqualTo(model.embed(second).content());
+
+        TokenUsage tokenUsage = response.tokenUsage();
+        assertThat(tokenUsage.inputTokenCount()).isEqualTo(2);
+        assertThat(tokenUsage.outputTokenCount()).isNull();
+        assertThat(tokenUsage.totalTokenCount()).isEqualTo(2);
+
+        assertThat(response.finishReason()).isNull();
     }
 
     @Test

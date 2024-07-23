@@ -16,7 +16,9 @@ import java.util.List;
 import java.util.concurrent.*;
 
 import static dev.langchain4j.internal.Utils.getOrDefault;
+import static dev.langchain4j.internal.ValidationUtils.ensureNotEmpty;
 import static java.nio.file.Files.newInputStream;
+import static java.util.Collections.singletonList;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
@@ -66,7 +68,23 @@ public abstract class AbstractInProcessEmbeddingModel extends DimensionAwareEmbe
 
     @Override
     public Response<List<Embedding>> embedAll(List<TextSegment> segments) {
+        ensureNotEmpty(segments, "segments");
+        if (segments.size() == 1) {
+            return embedInTheSameThread(segments.get(0));
+        } else {
+            return parallelizeEmbedding(segments);
+        }
+    }
 
+    private Response<List<Embedding>> embedInTheSameThread(TextSegment segment) {
+        EmbeddingAndTokenCount embeddingAndTokenCount = model().embed(segment.text());
+        return Response.from(
+                singletonList(Embedding.from(embeddingAndTokenCount.embedding)),
+                new TokenUsage(embeddingAndTokenCount.tokenCount - 2) // do not count special tokens [CLS] and [SEP])
+        );
+    }
+
+    private Response<List<Embedding>> parallelizeEmbedding(List<TextSegment> segments) {
         List<CompletableFuture<EmbeddingAndTokenCount>> futures = segments.stream()
                 .map(segment -> supplyAsync(() -> model().embed(segment.text()), executor))
                 .collect(toList());
