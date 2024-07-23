@@ -20,6 +20,10 @@ import static dev.langchain4j.internal.ValidationUtils.ensureNotNull;
  * <p>
  * It is recommended to add "Represent this sentence for searching relevant passages:" prefix to a query.
  * <p>
+ * Uses an {@link Executor} to parallelize the embedding process.
+ * By default, uses a cached thread pool with the number of threads equal to the number of available processors.
+ * Threads are cached for 1 second.
+ * <p>
  * More details <a href="https://huggingface.co/BAAI/bge-small-en-v1.5">here</a>
  */
 public class BgeSmallEnV15QuantizedEmbeddingModel extends AbstractInProcessEmbeddingModel {
@@ -30,14 +34,13 @@ public class BgeSmallEnV15QuantizedEmbeddingModel extends AbstractInProcessEmbed
             PoolingMode.CLS
     );
 
-    private final Executor executor;
-
     /**
      * Creates an instance of an {@code BgeSmallEnV15QuantizedEmbeddingModel}.
-     * Uses a fixed thread pool with the number of threads equal to the number of available processors.
+     * Uses a cached thread pool with the number of threads equal to the number of available processors.
+     * Threads are cached for 1 second.
      */
     public BgeSmallEnV15QuantizedEmbeddingModel() {
-        this(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()));
+        super(null);
     }
 
     /**
@@ -46,17 +49,12 @@ public class BgeSmallEnV15QuantizedEmbeddingModel extends AbstractInProcessEmbed
      * @param executor The executor to use to parallelize the embedding process.
      */
     public BgeSmallEnV15QuantizedEmbeddingModel(Executor executor) {
-        this.executor = ensureNotNull(executor, "executor");
+        super(ensureNotNull(executor, "executor"));
     }
 
     @Override
     protected OnnxBertBiEncoder model() {
         return MODEL;
-    }
-
-    @Override
-    protected Executor executor() {
-        return executor;
     }
 
     @Override

@@ -20,6 +20,10 @@ import static dev.langchain4j.internal.ValidationUtils.ensureNotNull;
  * <p>
  * It is recommended to use the "query:" prefix for queries and the "passage:" prefix for segments.
  * <p>
+ * Uses an {@link Executor} to parallelize the embedding process.
+ * By default, uses a cached thread pool with the number of threads equal to the number of available processors.
+ * Threads are cached for 1 second.
+ * <p>
  * More details <a href="https://huggingface.co/intfloat/e5-small-v2">here</a>
  */
 public class E5SmallV2EmbeddingModel extends AbstractInProcessEmbeddingModel {
@@ -30,14 +34,13 @@ public class E5SmallV2EmbeddingModel extends AbstractInProcessEmbeddingModel {
             PoolingMode.MEAN
     );
 
-    private final Executor executor;
-
     /**
      * Creates an instance of an {@code E5SmallV2EmbeddingModel}.
-     * Uses a fixed thread pool with the number of threads equal to the number of available processors.
+     * Uses a cached thread pool with the number of threads equal to the number of available processors.
+     * Threads are cached for 1 second.
      */
     public E5SmallV2EmbeddingModel() {
-        this(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()));
+        super(null);
     }
 
     /**
@@ -46,17 +49,12 @@ public class E5SmallV2EmbeddingModel extends AbstractInProcessEmbeddingModel {
      * @param executor The executor to use to parallelize the embedding process.
      */
     public E5SmallV2EmbeddingModel(Executor executor) {
-        this.executor = ensureNotNull(executor, "executor");
+        super(ensureNotNull(executor, "executor"));
     }
 
     @Override
     protected OnnxBertBiEncoder model() {
         return MODEL;
-    }
-
-    @Override
-    protected Executor executor() {
-        return executor;
     }
 
     @Override
