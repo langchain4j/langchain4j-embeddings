@@ -35,7 +35,7 @@ public class HuggingFaceTokenizer implements Tokenizer {
         options.put("padding", "false");
         options.put("truncation", "false");
 
-        this.tokenizer = createFrom(getClass().getResourceAsStream("/tokenizer.json"), options);
+        this.tokenizer = createFrom(getClass().getResourceAsStream("/bert-tokenizer.json"), options);
     }
 
     /**

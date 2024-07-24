@@ -30,7 +30,7 @@ public class BgeSmallZhEmbeddingModel extends AbstractInProcessEmbeddingModel {
 
     private static final OnnxBertBiEncoder MODEL = loadFromJar(
             "bge-small-zh.onnx",
-            "tokenizer.json",
+            "bge-small-zh-tokenizer.json",
             PoolingMode.CLS
     );
 

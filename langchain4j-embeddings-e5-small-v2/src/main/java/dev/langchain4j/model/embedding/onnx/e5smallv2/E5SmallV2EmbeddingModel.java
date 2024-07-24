@@ -30,7 +30,7 @@ public class E5SmallV2EmbeddingModel extends AbstractInProcessEmbeddingModel {
 
     private static final OnnxBertBiEncoder MODEL = loadFromJar(
             "e5-small-v2.onnx",
-            "tokenizer.json",
+            "e5-small-v2-tokenizer.json",
             PoolingMode.MEAN
     );
 

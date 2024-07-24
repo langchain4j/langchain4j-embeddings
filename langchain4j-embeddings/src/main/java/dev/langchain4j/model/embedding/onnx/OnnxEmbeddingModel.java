@@ -80,7 +80,7 @@ public class OnnxEmbeddingModel extends AbstractInProcessEmbeddingModel {
         super(null);
         this.onnxBertBiEncoder = loadFromFileSystem(
                 pathToModel,
-                OnnxEmbeddingModel.class.getResourceAsStream("/tokenizer.json"),
+                OnnxEmbeddingModel.class.getResourceAsStream("/bert-tokenizer.json"),
                 PoolingMode.MEAN
         );
     }
