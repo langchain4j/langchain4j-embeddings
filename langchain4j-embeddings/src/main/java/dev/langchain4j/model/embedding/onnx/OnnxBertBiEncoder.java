@@ -16,7 +16,6 @@ import java.util.*;
 import static ai.onnxruntime.OnnxTensor.createTensor;
 import static dev.langchain4j.internal.Exceptions.illegalArgument;
 import static dev.langchain4j.internal.ValidationUtils.ensureNotNull;
-import static java.lang.Math.min;
 import static java.nio.LongBuffer.wrap;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
@@ -54,7 +53,7 @@ public class OnnxBertBiEncoder {
         }
     }
 
-    public EmbeddingAndTokenCount embed(String text) {
+    EmbeddingAndTokenCount embed(String text) {
 
         List<String> tokens = tokenizer.tokenize(text);
         List<List<String>> partitions = partition(tokens, MAX_SEQUENCE_LENGTH);
@@ -78,14 +77,27 @@ public class OnnxBertBiEncoder {
         return new EmbeddingAndTokenCount(embedding, tokens.size());
     }
 
-    private static List<List<String>> partition(List<String> tokens, int partitionSize) {
+    static List<List<String>> partition(List<String> tokens, int partitionSize) {
         List<List<String>> partitions = new ArrayList<>();
-        // first (CLS) and last (SEP) tokens are ignored
-        for (int from = 1; from < tokens.size() - 1; from += partitionSize) {
-            int to = min(tokens.size() - 1, from + partitionSize);
-            List<String> partition = tokens.subList(from, to);
-            partitions.add(partition);
+        int from = 1; // Skip the first (CLS) token
+
+        while (from < tokens.size() - 1) { // Skip the last (SEP) token
+            int to = from + partitionSize;
+
+            if (to >= tokens.size() - 1) {
+                to = tokens.size() - 1;
+            } else {
+                // ensure we don't split word across partitions
+                while (tokens.get(to).startsWith("##")) {
+                    to--;
+                }
+            }
+
+            partitions.add(tokens.subList(from, to));
+
+            from = to;
         }
+
         return partitions;
     }
 
