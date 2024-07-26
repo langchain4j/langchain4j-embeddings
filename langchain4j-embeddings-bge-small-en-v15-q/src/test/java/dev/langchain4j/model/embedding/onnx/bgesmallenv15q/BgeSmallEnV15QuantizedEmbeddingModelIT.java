@@ -11,7 +11,7 @@ import static dev.langchain4j.model.embedding.onnx.internal.VectorUtils.magnitud
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.Percentage.withPercentage;
 
-class BgeSmallEnV15QuantizedEmbeddingModelTest {
+class BgeSmallEnV15QuantizedEmbeddingModelIT {
 
     @Test
     void should_embed() {
