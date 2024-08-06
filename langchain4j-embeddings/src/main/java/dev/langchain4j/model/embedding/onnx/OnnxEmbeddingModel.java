@@ -3,7 +3,6 @@ package dev.langchain4j.model.embedding.onnx;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import static dev.langchain4j.internal.ValidationUtils.ensureNotNull;
 
@@ -31,7 +30,8 @@ public class OnnxEmbeddingModel extends AbstractInProcessEmbeddingModel {
      *                        {@code "pooling_mode_mean_tokens": true} means that {@link PoolingMode#MEAN} should be used.
      */
     public OnnxEmbeddingModel(Path pathToModel, Path pathToTokenizer, PoolingMode poolingMode) {
-        this(pathToModel, pathToTokenizer, poolingMode, Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()));
+        super(null);
+        this.onnxBertBiEncoder = loadFromFileSystem(pathToModel, pathToTokenizer, poolingMode);
     }
 
     /**
