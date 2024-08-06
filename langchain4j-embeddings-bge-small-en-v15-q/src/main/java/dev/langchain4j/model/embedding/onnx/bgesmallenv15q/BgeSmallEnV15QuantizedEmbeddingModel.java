@@ -5,7 +5,6 @@ import dev.langchain4j.model.embedding.onnx.OnnxBertBiEncoder;
 import dev.langchain4j.model.embedding.onnx.PoolingMode;
 
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import static dev.langchain4j.internal.ValidationUtils.ensureNotNull;
 
@@ -30,7 +29,7 @@ public class BgeSmallEnV15QuantizedEmbeddingModel extends AbstractInProcessEmbed
 
     private static final OnnxBertBiEncoder MODEL = loadFromJar(
             "bge-small-en-v1.5-q.onnx",
-            "bge-small-en-v1.5-tokenizer.json",
+            "bge-small-en-v1.5-q-tokenizer.json",
             PoolingMode.CLS
     );
 
