@@ -14,7 +14,7 @@
     <artifactId>langchain4j-embeddings</artifactId>
     <name>langchain4j-embeddings</name>
     <description>Common functionality for other langchain4j-embeddings-xxx modules</description>
-    
+
     <properties>
         <ai.djl.version>0.28.0</ai.djl.version>
     </properties>
@@ -38,12 +38,13 @@
             <artifactId>api</artifactId>
             <version>${ai.djl.version}</version>
             <exclusions>
-                <!-- due to CVE-2024-26308 and CVE-2024-25710-->
                 <exclusion>
+                    <!-- due to CVE-2024-26308 and CVE-2024-25710-->
                     <groupId>org.apache.commons</groupId>
                     <artifactId>commons-compress</artifactId>
                 </exclusion>
                 <exclusion>
+                    <!-- due to version conflict between dev.langchain4j:langchain4j-core and ai.djl:api -->
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
@@ -59,12 +60,6 @@
             <groupId>ai.djl.huggingface</groupId>
             <artifactId>tokenizers</artifactId>
             <version>${ai.djl.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>ai.djl</groupId>
-                    <artifactId>api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
