@@ -42,6 +42,14 @@ public class OnnxBertBiEncoder {
         }
     }
 
+    public OnnxBertBiEncoder(OrtEnvironment environment, OrtSession session, HuggingFaceTokenizer tokenizer, PoolingMode poolingMode) {
+        this.environment = environment;
+        this.session = session;
+        this.expectedInputs = session.getInputNames();
+        this.tokenizer = tokenizer;
+        this.poolingMode = poolingMode;
+    }
+
     static class EmbeddingAndTokenCount {
 
         float[] embedding;
