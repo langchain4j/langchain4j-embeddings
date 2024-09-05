@@ -42,12 +42,16 @@ public class OnnxBertBiEncoder {
         }
     }
 
-    public OnnxBertBiEncoder(OrtEnvironment environment, OrtSession session, HuggingFaceTokenizer tokenizer, PoolingMode poolingMode) {
-        this.environment = environment;
-        this.session = session;
-        this.expectedInputs = session.getInputNames();
-        this.tokenizer = tokenizer;
-        this.poolingMode = poolingMode;
+    public OnnxBertBiEncoder(OrtEnvironment environment, OrtSession session, InputStream tokenizer, PoolingMode poolingMode) {
+        try {
+            this.environment = environment;
+            this.session = session;
+            this.expectedInputs = session.getInputNames();
+            this.tokenizer = HuggingFaceTokenizer.newInstance(tokenizer, singletonMap("padding", "false"));
+            this.poolingMode = ensureNotNull(poolingMode, "poolingMode");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     static class EmbeddingAndTokenCount {
