@@ -45,21 +45,11 @@
             <version>${ai.djl.version}</version>
             <exclusions>
                 <exclusion>
-                    <!-- due to CVE-2024-26308 and CVE-2024-25710-->
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-compress</artifactId>
-                </exclusion>
-                <exclusion>
                     <!-- due to version conflict between dev.langchain4j:langchain4j-core and ai.djl:api -->
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-compress</artifactId>
-            <version>1.27.1</version>
         </dependency>
 
         <dependency>
