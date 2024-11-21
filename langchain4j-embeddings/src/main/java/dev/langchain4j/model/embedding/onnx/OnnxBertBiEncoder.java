@@ -22,7 +22,7 @@ import static java.util.stream.Collectors.toList;
 
 public class OnnxBertBiEncoder {
 
-    private static final int MAX_SEQUENCE_LENGTH = 510; // 512 - 2 (special tokens [CLS] and [SEP])
+    private static final int MAX_SEQUENCE_LENGTH = 5102; // 512 - 2 (special tokens [CLS] and [SEP])
 
     private final OrtEnvironment environment;
     private final OrtSession session;
