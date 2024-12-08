@@ -197,6 +197,10 @@ public class OnnxBertBiEncoder {
     }
 
     private float[] weightedAverage(List<float[]> embeddings, List<Integer> weights) {
+        if(Objects.isNull(embeddings) || embeddings.isEmpty()) {
+            return new float[0];
+        }
+
         if (embeddings.size() == 1) {
             return embeddings.get(0);
         }
