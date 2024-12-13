@@ -4,6 +4,8 @@ on:
     types: [ opened, synchronize, reopened ]
     branches:
       - main
+permissions:
+  pull-requests: write
 
 jobs:
   pr-bot:
