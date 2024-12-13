@@ -29,7 +29,7 @@ public class AllMiniLmL6V2EmbeddingModel extends AbstractInProcessEmbeddingModel
 
     private static final OnnxBertBiEncoder MODEL = loadFromJar(
             "all-minilm-l6-v2.onnx",
-            "all-minilm-l6-v2-tokenizer",
+            "all-minilm-l6-v2",
             PoolingMode.MEAN
     );
 
