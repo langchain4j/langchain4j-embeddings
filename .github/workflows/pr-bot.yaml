@@ -15,3 +15,6 @@ jobs:
         uses: langchain4j/pr-bot@main
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_BASE_URL: ${{ secrets.OPENAI_BASE_URL }}
