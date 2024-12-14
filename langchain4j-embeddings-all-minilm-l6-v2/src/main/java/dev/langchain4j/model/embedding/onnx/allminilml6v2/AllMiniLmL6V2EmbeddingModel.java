@@ -28,7 +28,7 @@ import static dev.langchain4j.internal.ValidationUtils.ensureNotNull;
 public class AllMiniLmL6V2EmbeddingModel extends AbstractInProcessEmbeddingModel {
 
     private static final OnnxBertBiEncoder MODEL = loadFromJar(
-            "a l l-m i n  il  m - l6-v2-tokenizer",
+            "a l l-m i n  il  m - l6-v2-tokeni zer",
             " ",
             PoolingMode.MEAN
     );
