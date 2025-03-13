@@ -75,7 +75,7 @@ public class OnnxEmbeddingModel extends AbstractInProcessEmbeddingModel {
      * @deprecated Use {@link OnnxEmbeddingModel#OnnxEmbeddingModel(Path, Path, PoolingMode)} or
      * {@link OnnxEmbeddingModel#OnnxEmbeddingModel(String, String, PoolingMode)} instead.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public OnnxEmbeddingModel(Path pathToModel) {
         super(null);
         this.onnxBertBiEncoder = loadFromFileSystem(
@@ -90,7 +90,7 @@ public class OnnxEmbeddingModel extends AbstractInProcessEmbeddingModel {
      * @deprecated Use {@link OnnxEmbeddingModel#OnnxEmbeddingModel(Path, Path, PoolingMode)} or
      * {@link OnnxEmbeddingModel#OnnxEmbeddingModel(String, String, PoolingMode)} instead.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public OnnxEmbeddingModel(String pathToModel) {
         this(Paths.get(pathToModel));
     }
