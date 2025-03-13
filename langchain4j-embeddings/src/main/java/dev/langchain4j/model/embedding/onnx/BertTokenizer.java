@@ -3,8 +3,6 @@ package dev.langchain4j.model.embedding.onnx;
 import ai.djl.modality.nlp.DefaultVocabulary;
 import ai.djl.modality.nlp.Vocabulary;
 import ai.djl.modality.nlp.bert.BertFullTokenizer;
-import dev.langchain4j.agent.tool.ToolExecutionRequest;
-import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.model.Tokenizer;
 
@@ -14,7 +12,7 @@ import java.util.List;
 /**
  * @deprecated Use {@link HuggingFaceTokenizer} instead.
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class BertTokenizer implements Tokenizer {
 
     private final BertFullTokenizer tokenizer;
@@ -55,16 +53,6 @@ public class BertTokenizer implements Tokenizer {
             tokens += estimateTokenCountInMessage(message);
         }
         return tokens;
-    }
-
-    @Override
-    public int estimateTokenCountInToolSpecifications(Iterable<ToolSpecification> toolSpecifications) {
-        throw new RuntimeException("Not applicable");
-    }
-
-    @Override
-    public int estimateTokenCountInToolExecutionRequests(Iterable<ToolExecutionRequest> toolExecutionRequests) {
-        throw new RuntimeException("Not applicable");
     }
 
     public List<String> tokenize(String text) {
