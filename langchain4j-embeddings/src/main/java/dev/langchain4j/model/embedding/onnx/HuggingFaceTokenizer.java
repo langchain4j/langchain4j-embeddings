@@ -1,8 +1,6 @@
 package dev.langchain4j.model.embedding.onnx;
 
 import ai.djl.huggingface.tokenizers.Encoding;
-import dev.langchain4j.agent.tool.ToolExecutionRequest;
-import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.model.Tokenizer;
 
@@ -113,15 +111,5 @@ public class HuggingFaceTokenizer implements Tokenizer {
             tokens += estimateTokenCountInMessage(message);
         }
         return tokens;
-    }
-
-    @Override
-    public int estimateTokenCountInToolSpecifications(Iterable<ToolSpecification> toolSpecifications) {
-        throw new RuntimeException("Not applicable");
-    }
-
-    @Override
-    public int estimateTokenCountInToolExecutionRequests(Iterable<ToolExecutionRequest> toolExecutionRequests) {
-        throw new RuntimeException("Not applicable");
     }
 }
