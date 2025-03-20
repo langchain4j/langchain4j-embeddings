@@ -70,31 +70,6 @@ public class OnnxEmbeddingModel extends AbstractInProcessEmbeddingModel {
         this(Paths.get(pathToModel), Paths.get(pathToTokenizer), poolingMode, executor);
     }
 
-    /**
-     * @param pathToModel The path to the modelPath file (e.g., "/path/to/model.onnx")
-     * @deprecated Use {@link OnnxEmbeddingModel#OnnxEmbeddingModel(Path, Path, PoolingMode)} or
-     * {@link OnnxEmbeddingModel#OnnxEmbeddingModel(String, String, PoolingMode)} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public OnnxEmbeddingModel(Path pathToModel) {
-        super(null);
-        this.onnxBertBiEncoder = loadFromFileSystem(
-                pathToModel,
-                OnnxEmbeddingModel.class.getResourceAsStream("/bert-tokenizer.json"),
-                PoolingMode.MEAN
-        );
-    }
-
-    /**
-     * @param pathToModel The path to the modelPath file (e.g., "/path/to/model.onnx")
-     * @deprecated Use {@link OnnxEmbeddingModel#OnnxEmbeddingModel(Path, Path, PoolingMode)} or
-     * {@link OnnxEmbeddingModel#OnnxEmbeddingModel(String, String, PoolingMode)} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public OnnxEmbeddingModel(String pathToModel) {
-        this(Paths.get(pathToModel));
-    }
-
     @Override
     protected OnnxBertBiEncoder model() {
         return onnxBertBiEncoder;
