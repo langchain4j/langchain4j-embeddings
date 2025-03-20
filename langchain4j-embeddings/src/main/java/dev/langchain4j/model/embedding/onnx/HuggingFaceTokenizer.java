@@ -1,7 +1,7 @@
 package dev.langchain4j.model.embedding.onnx;
 
 import ai.djl.huggingface.tokenizers.Encoding;
-import dev.langchain4j.data.message.ChatMessage;
+import dev.langchain4j.data.message.*;
 import dev.langchain4j.model.Tokenizer;
 
 import java.io.InputStream;
@@ -101,7 +101,17 @@ public class HuggingFaceTokenizer implements Tokenizer {
 
     @Override
     public int estimateTokenCountInMessage(ChatMessage message) {
-        return estimateTokenCountInText(message.text());
+        if (message instanceof SystemMessage systemMessage) {
+            return estimateTokenCountInText(systemMessage.text());
+        } else if (message instanceof UserMessage userMessage) {
+            return estimateTokenCountInText(userMessage.singleText());
+        } else if (message instanceof AiMessage aiMessage) {
+            return estimateTokenCountInText(aiMessage.text());
+        } else if (message instanceof ToolExecutionResultMessage toolExecutionResultMessage) {
+            return estimateTokenCountInText(toolExecutionResultMessage.text());
+        } else {
+            throw new IllegalArgumentException("Unknown message type: " + message);
+        }
     }
 
     @Override
