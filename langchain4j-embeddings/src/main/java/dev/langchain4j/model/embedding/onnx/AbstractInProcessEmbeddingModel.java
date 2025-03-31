@@ -3,7 +3,6 @@ package dev.langchain4j.model.embedding.onnx;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.DimensionAwareEmbeddingModel;
-import dev.langchain4j.model.embedding.TokenCountEstimator;
 import dev.langchain4j.model.embedding.onnx.OnnxBertBiEncoder.EmbeddingAndTokenCount;
 import dev.langchain4j.model.output.Response;
 import dev.langchain4j.model.output.TokenUsage;
@@ -23,7 +22,7 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 
-public abstract class AbstractInProcessEmbeddingModel extends DimensionAwareEmbeddingModel implements TokenCountEstimator {
+public abstract class AbstractInProcessEmbeddingModel extends DimensionAwareEmbeddingModel {
 
     private final Executor executor;
 
@@ -103,10 +102,5 @@ public abstract class AbstractInProcessEmbeddingModel extends DimensionAwareEmbe
         }
 
         return Response.from(embeddings, new TokenUsage(inputTokenCount));
-    }
-
-    @Override
-    public int estimateTokenCount(String text) {
-        return model().countTokens(text);
     }
 }
