@@ -11,7 +11,7 @@
 
     <name>langchain4j-embeddings parent POM</name>
     <description>Parent POM for langchain4j-embeddings submodules</description>
-    <url>https://github.com/langchain4j/langchain4j-embeddings</url>
+    <url>https://github.com/langchain4j/langchain4j-embeddings/tree/main</url>
 
     <modules>
         <module>langchain4j-embeddings</module>
@@ -178,30 +178,23 @@
 
     <licenses>
         <license>
-            <name>Apache-2.0</name>
+            <name>The Apache Software License, Version 2.0</name>
             <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
             <distribution>repo</distribution>
-            <comments>A business-friendly OSS license</comments>
         </license>
     </licenses>
 
     <developers>
         <developer>
-            <id>deep-learning-dynamo</id>
-            <name>deep-learning-dynamo</name>
-            <email>deeplearningdynamo@gmail.com</email>
-            <url>https://github.com/deep-learning-dynamo</url>
-        </developer>
-        <developer>
-            <id>kuraleta</id>
-            <name>kuraleta</name>
-            <email>digital.kuraleta@gmail.com</email>
-            <url>https://github.com/kuraleta</url>
+            <id>dliubarskyi</id>
+            <name>Dmytro Liubarskyi</name>
+            <email>info@langchain4j.dev</email>
+            <url>https://github.com/dliubarskyi</url>
         </developer>
     </developers>
 
     <scm>
-        <url>https://github.com/langchain4j/langchain4j-embeddings</url>
+        <url>https://github.com/langchain4j/langchain4j-embeddings/tree/main</url>
         <connection>scm:git:git://github.com/langchain4j/langchain4j-embeddings.git</connection>
         <developerConnection>scm:git:git@github.com:langchain4j/langchain4j-embeddings.git</developerConnection>
     </scm>
@@ -219,7 +212,6 @@
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
-            <name>OSS Repository Hosting</name>
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
