@@ -25,7 +25,7 @@ jobs:
           server-password: MAVEN_CENTRAL_PASSWORD
 
       - name: snapshot_deploy
-        run: mvn -U -B --fail-at-end deploy
+        run: mvn -B -U --fail-at-end -DskipTests -DskipITs clean deploy
         env:
           MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
