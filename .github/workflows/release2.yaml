@@ -1,11 +1,11 @@
-name: release
+name: release2
 
 on:
   workflow_dispatch:
 
 jobs:
 
-  release:
+  release2:
 
     runs-on: ubuntu-latest
 
