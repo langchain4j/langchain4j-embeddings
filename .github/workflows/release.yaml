@@ -1,0 +1,47 @@
+name: release
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  release:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+          server-id: central
+          server-username: MAVEN_CENTRAL_USERNAME
+          server-password: MAVEN_CENTRAL_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: GPG_PASSPHRASE
+
+      - name: release_part_1 # Maven Central allows uploading archive up to 1GB, so we need to split release in 2 parts
+        run: |
+          mvn -B -U --fail-at-end \
+            -pl !langchain4j-embeddings-bge-small-zh-q,!langchain4j-embeddings-bge-small-zh-v15-q,!langchain4j-embeddings-bge-small-zh-v15,!langchain4j-embeddings-bge-small-zh \
+            -Psign clean deploy
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+
+      - name: release_part_2 # Maven Central allows uploading archive up to 1GB, so we need to split release in 2 parts
+        run: |
+          mvn -B -U --fail-at-end \
+            -pl langchain4j-embeddings-bge-small-zh-q,langchain4j-embeddings-bge-small-zh-v15-q,langchain4j-embeddings-bge-small-zh-v15,langchain4j-embeddings-bge-small-zh \
+            -Psign clean deploy
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
