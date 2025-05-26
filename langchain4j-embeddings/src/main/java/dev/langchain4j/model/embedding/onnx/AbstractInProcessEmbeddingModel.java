@@ -7,7 +7,6 @@ import dev.langchain4j.model.embedding.onnx.OnnxBertBiEncoder.EmbeddingAndTokenC
 import dev.langchain4j.model.output.Response;
 import dev.langchain4j.model.output.TokenUsage;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -16,7 +15,6 @@ import java.util.concurrent.*;
 
 import static dev.langchain4j.internal.Utils.getOrDefault;
 import static dev.langchain4j.internal.ValidationUtils.ensureNotEmpty;
-import static java.nio.file.Files.newInputStream;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -48,19 +46,7 @@ public abstract class AbstractInProcessEmbeddingModel extends DimensionAwareEmbe
     }
 
     static OnnxBertBiEncoder loadFromFileSystem(Path pathToModel, Path pathToTokenizer, PoolingMode poolingMode) {
-        try {
-            return new OnnxBertBiEncoder(newInputStream(pathToModel), newInputStream(pathToTokenizer), poolingMode);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    static OnnxBertBiEncoder loadFromFileSystem(Path pathToModel, InputStream tokenizer, PoolingMode poolingMode) {
-        try {
-            return new OnnxBertBiEncoder(newInputStream(pathToModel), tokenizer, poolingMode);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return new OnnxBertBiEncoder(pathToModel, pathToTokenizer, poolingMode);
     }
 
     protected abstract OnnxBertBiEncoder model();
