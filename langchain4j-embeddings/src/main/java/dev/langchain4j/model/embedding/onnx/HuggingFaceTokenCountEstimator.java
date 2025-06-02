@@ -107,7 +107,7 @@ public class HuggingFaceTokenCountEstimator implements TokenCountEstimator {
         } else if (message instanceof UserMessage userMessage) {
             return estimateTokenCountInText(userMessage.singleText());
         } else if (message instanceof AiMessage aiMessage) {
-            return estimateTokenCountInText(aiMessage.text());
+            return aiMessage.text() == null ? 0 : estimateTokenCountInText(aiMessage.text());
         } else if (message instanceof ToolExecutionResultMessage toolExecutionResultMessage) {
             return estimateTokenCountInText(toolExecutionResultMessage.text());
         } else {
