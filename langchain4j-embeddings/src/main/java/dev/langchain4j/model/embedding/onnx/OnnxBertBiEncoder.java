@@ -11,6 +11,7 @@ import ai.onnxruntime.OrtSession.Result;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.*;
 
 import static ai.onnxruntime.OnnxTensor.createTensor;
@@ -29,6 +30,18 @@ public class OnnxBertBiEncoder {
     private final Set<String> expectedInputs;
     private final HuggingFaceTokenizer tokenizer;
     private final PoolingMode poolingMode;
+
+    public OnnxBertBiEncoder(Path pathToModel, Path pathToTokenizer, PoolingMode poolingMode) {
+        try {
+            this.environment = OrtEnvironment.getEnvironment();
+            this.session = environment.createSession(pathToModel.toString());
+            this.expectedInputs = session.getInputNames();
+            this.tokenizer = HuggingFaceTokenizer.newInstance(pathToTokenizer, singletonMap("padding", "false"));
+            this.poolingMode = ensureNotNull(poolingMode, "poolingMode");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public OnnxBertBiEncoder(InputStream model, InputStream tokenizer, PoolingMode poolingMode) {
         try {
