@@ -12,6 +12,10 @@ on:
         description: "Beta release version (e.g., 1.8.0-beta15)"
         required: true
 
+env:
+  STABLE_VERSION: ${{ github.event.inputs.stableVersion || github.event.client_payload.stableVersion }}
+  BETA_VERSION: ${{ github.event.inputs.betaVersion || github.event.client_payload.betaVersion }}
+
 jobs:
 
   release:
@@ -35,12 +39,6 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
-      - name: Determine versions
-        id: versions
-        run: |
-          echo "stableVersion=${{ github.event.inputs.stableVersion || github.event.client_payload.stableVersion }}" >> $GITHUB_OUTPUT
-          echo "betaVersion=${{ github.event.inputs.betaVersion || github.event.client_payload.betaVersion }}" >> $GITHUB_OUTPUT
-
       - name: Extract current stable SNAPSHOT version from POM property
         id: extract-stable-snapshot-version
         run: |
@@ -48,10 +46,10 @@ jobs:
           echo "stableVersionSnapshot=$REVISION" >> $GITHUB_OUTPUT
 
       - name: Update stable versions
-        run: mvn versions:set -DnewVersion=${{ steps.versions.outputs.stableVersion }} -DoldVersion=${{ steps.extract-stable-snapshot-version.outputs.stableVersionSnapshot }} -DgroupId=* -DartifactId=* -DgenerateBackupPoms=false
+        run: mvn versions:set -DnewVersion=$STABLE_VERSION -DoldVersion=${{ steps.extract-stable-snapshot-version.outputs.stableVersionSnapshot }} -DgroupId=* -DartifactId=* -DgenerateBackupPoms=false
 
       - name: Update stable version property
-        run: mvn versions:set-property -Dproperty=langchain4j.stable.version -DnewVersion=${{ steps.versions.outputs.stableVersion }}
+        run: mvn versions:set-property -Dproperty=langchain4j.stable.version -DnewVersion=$STABLE_VERSION
 
       - name: Extract current beta SNAPSHOT version from POM property
         id: extract-beta-snapshot-version
@@ -60,10 +58,10 @@ jobs:
           echo "betaVersionSnapshot=$REVISION" >> $GITHUB_OUTPUT
 
       - name: Update beta versions
-        run: mvn versions:set -DnewVersion=${{ steps.versions.outputs.betaVersion }} -DoldVersion=${{ steps.extract-beta-snapshot-version.outputs.betaVersionSnapshot }} -DgroupId=* -DartifactId=* -DgenerateBackupPoms=false
+        run: mvn versions:set -DnewVersion=$BETA_VERSION -DoldVersion=${{ steps.extract-beta-snapshot-version.outputs.betaVersionSnapshot }} -DgroupId=* -DartifactId=* -DgenerateBackupPoms=false
 
       - name: Update beta version property
-        run: mvn versions:set-property -Dproperty=langchain4j.beta.version -DnewVersion=${{ steps.versions.outputs.betaVersion }}
+        run: mvn versions:set-property -Dproperty=langchain4j.beta.version -DnewVersion=$BETA_VERSION
 
       - name: release_part_1 # Maven Central allows uploading archive up to 1GB, so we need to split release in 2 parts
         run: |
