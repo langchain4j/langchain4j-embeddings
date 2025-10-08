@@ -39,6 +39,11 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
+      - name: Show inputs
+        run: |
+          echo "Stable version: ${{ env.STABLE_VERSION }}"
+          echo "Beta version: ${{ env.BETA_VERSION }}"
+
       - name: Extract current stable SNAPSHOT version from POM property
         id: extract-stable-snapshot-version
         run: |
