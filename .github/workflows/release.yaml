@@ -45,7 +45,7 @@ jobs:
 
       - name: Create release branch
         run: |
-          git checkout -b release-${{ env.STABLE_VERSION }}
+          git checkout -b release-${{ env.BETA_VERSION }}
 
       - name: Extract current stable SNAPSHOT version from POM property
         id: extract-stable-snapshot-version
@@ -100,7 +100,7 @@ jobs:
 
       - name: Push release branch
         run: |
-          git push origin release-${{ env.STABLE_VERSION }}
+          git push origin release-${{ env.BETA_VERSION }}
 
       - name: Tag release
         run: |
