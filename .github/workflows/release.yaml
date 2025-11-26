@@ -90,7 +90,7 @@ jobs:
       - name: release_part_1 # Maven Central allows uploading archive up to 1GB, so we need to split release in 2 parts
         run: |
           mvn -B -U --fail-at-end \
-            -pl !langchain4j-embeddings-bge-small-zh-q,!langchain4j-embeddings-bge-small-zh-v15-q,!langchain4j-embeddings-bge-small-zh-v15,!langchain4j-embeddings-bge-small-zh \
+            -pl !langchain4j-embeddings-bge-small-zh-v15-q,!langchain4j-embeddings-bge-small-zh-v15 \
             -Psign clean deploy
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
@@ -112,7 +112,7 @@ jobs:
       - name: release_part_2 # Maven Central allows uploading archive up to 1GB, so we need to split release in 2 parts
         run: |
           mvn -B -U --fail-at-end \
-            -pl langchain4j-embeddings-bge-small-zh-q,langchain4j-embeddings-bge-small-zh-v15-q,langchain4j-embeddings-bge-small-zh-v15,langchain4j-embeddings-bge-small-zh \
+            -pl langchain4j-embeddings-bge-small-zh-v15-q,langchain4j-embeddings-bge-small-zh-v15 \
             -Psign clean deploy
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}

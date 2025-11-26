@@ -21,8 +21,6 @@
         <module>langchain4j-embeddings-bge-small-en-q</module>
         <module>langchain4j-embeddings-bge-small-en-v15</module>
         <module>langchain4j-embeddings-bge-small-en-v15-q</module>
-        <module>langchain4j-embeddings-bge-small-zh</module>
-        <module>langchain4j-embeddings-bge-small-zh-q</module>
         <module>langchain4j-embeddings-bge-small-zh-v15</module>
         <module>langchain4j-embeddings-bge-small-zh-v15-q</module>
         <module>langchain4j-embeddings-e5-small-v2</module>
