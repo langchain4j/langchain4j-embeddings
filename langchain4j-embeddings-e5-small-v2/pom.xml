@@ -43,4 +43,29 @@
 
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.13.0</version>
+                <executions>
+                    <execution>
+                        <id>download-model-file</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://huggingface.co/Xenova/e5-small-v2/resolve/main/onnx/model.onnx</url>
+                            <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                            <outputFileName>e5-small-v2.onnx</outputFileName>
+                            <sha256>b2a43b66f7f9b6f29643a21340ad7c03d2d91e6bd5d43429a77799a9ee880eb0</sha256>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
