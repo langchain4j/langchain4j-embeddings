@@ -5,4 +5,4 @@ ONNX model card:
 https://huggingface.co/Xenova/bge-small-zh
 
 ONNX model file:
-https://huggingface.co/Xenova/bge-small-zh/resolve/main/onnx/model_quantized.onnx
+https://huggingface.co/Xenova/bge-small-zh/blob/main/onnx/model_quantized.onnx
