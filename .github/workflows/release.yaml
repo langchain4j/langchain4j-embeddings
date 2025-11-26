@@ -23,8 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          lfs: true
+          lfs: false
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
