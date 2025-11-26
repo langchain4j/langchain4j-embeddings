@@ -43,4 +43,29 @@
 
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.13.0</version>
+                <executions>
+                    <execution>
+                        <id>download-model-file</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://huggingface.co/Xenova/bge-small-zh-v1.5/resolve/main/onnx/model.onnx</url>
+                            <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                            <outputFileName>bge-small-zh-v1.5.onnx</outputFileName>
+                            <sha256>69a0b846f4f116b5e6aabf9546ea6754d02264f3211a13a1bd69b31b8040749a</sha256>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
